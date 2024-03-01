@@ -1,28 +1,28 @@
 import Phaser from 'phaser';
 import logoImg from './assets/logo.png';
+import Menu from './menu'
+import Cutscene1 from './cutscene1';
+import Level1 from './level1';
 
-class MyGame extends Phaser.Scene
-{
-    constructor ()
-    {
-        super();
+
+class MyGame extends Phaser.Scene {
+    constructor() {
+        super({ key: 'myGame' });
     }
 
-    preload ()
-    {
+    preload() {
         //  This is an example of a bundled image:
         this.load.image('logo', logoImg);
 
         //  This is an example of loading a static image from the public folder:
         this.load.image('background', 'assets/bg.jpg');
     }
-      
-    create ()
-    {
+
+    create() {
         this.add.image(400, 300, 'background');
 
         const logo = this.add.image(400, 150, 'logo');
-      
+
         this.tweens.add({
             targets: logo,
             y: 450,
@@ -36,10 +36,18 @@ class MyGame extends Phaser.Scene
 
 const config = {
     type: Phaser.AUTO,
-    parent: 'phaser-example',
-    width: 800,
-    height: 600,
-    scene: MyGame
+
+    width: 384,
+    height: 216,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 200 },
+            enableBody: true,
+            debug: true
+        },
+    },
+    scene: [Level1, Menu, Cutscene1,]
 };
 
 const game = new Phaser.Game(config);
