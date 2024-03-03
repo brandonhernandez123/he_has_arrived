@@ -1,23 +1,24 @@
 import Phaser from "phaser";
-import Player from '/home/brandonhdz123/projects/game_dev/game1/src/Player.js'
+import Player from './Player'
 import Boulder from "./Boulder";
 import Fireball from "./Fireball";
-import player_idle from '/home/brandonhdz123/projects/game_dev/game1/src/assets/Player/monk_idle.png'
-import player_run from '/home/brandonhdz123/projects/game_dev/game1/src/assets/Player/monk_run.png'
-import player_atk_basic from '/home/brandonhdz123/projects/game_dev/game1/src/assets/Player/monk_atk_basic.png'
-import player_sp_atk from '/home/brandonhdz123/projects/game_dev/game1/src/assets/Player/monk_sp_atk.png'
-import boulder_object from '/home/brandonhdz123/projects/game_dev/game1/src/assets/Player/boulder.png'
-import fireball_object from '/home/brandonhdz123/projects/game_dev/game1/src/assets/Player/fire_ball.png'
+import player_idle from '../src/assets/Player/monk_idle.png'
+import player_run from '../src/assets/Player/monk_run.png'
+import player_atk_basic from '../src/assets/Player/monk_atk_basic.png'
+import player_sp_atk from '../src/assets/Player/monk_sp_atk.png'
+import player_super_atk from './assets/Player/monk_super_atk.png'
+import boulder_object from '../src/assets/Player/boulder.png'
+import fireball_object from '../src/assets/Player/fire_ball.png'
 
 //background imports
-import bg0 from '/home/brandonhdz123/projects/game_dev/game1/src/assets/level1_bg/sky.png'
-import bg1 from '/home/brandonhdz123/projects/game_dev/game1/src/assets/level1_bg/cloud_lonely.png'
-import bg2 from '/home/brandonhdz123/projects/game_dev/game1/src/assets/level1_bg/clouds_bg.png'
-import bg3 from '/home/brandonhdz123/projects/game_dev/game1/src/assets/level1_bg/glacial_mountains.png'
-import bg4 from '/home/brandonhdz123/projects/game_dev/game1/src/assets/level1_bg/clouds_mg_3.png'
-import bg5 from '/home/brandonhdz123/projects/game_dev/game1/src/assets/level1_bg/clouds_mg_2.png'
-import bg6 from '/home/brandonhdz123/projects/game_dev/game1/src/assets/level1_bg/clouds_mg_2.png'
-import bg7 from '/home/brandonhdz123/projects/game_dev/game1/src/assets/level1_bg/clouds_mg_1.png'
+import bg0 from '../src/assets/level1_bg/sky.png'
+import bg1 from '../src/assets/level1_bg/cloud_lonely.png'
+import bg2 from '../src/assets/level1_bg/clouds_bg.png'
+import bg3 from '../src/assets/level1_bg/glacial_mountains.png'
+import bg4 from '../src/assets/level1_bg/clouds_mg_3.png'
+import bg5 from '../src/assets/level1_bg/clouds_mg_2.png'
+import bg6 from '../src/assets/level1_bg/clouds_mg_2.png'
+import bg7 from '../src/assets/level1_bg/clouds_mg_1.png'
 
 
 
@@ -51,6 +52,8 @@ export default class Level1 extends Phaser.Scene {
         this.load.spritesheet('player_run', player_run, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('player_atk_basic', player_atk_basic, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('player_sp_atk', player_sp_atk, { frameWidth: 288, frameHeight: 128 })
+        this.load.spritesheet('player_super_atk', player_super_atk, { frameWidth: 288, frameHeight: 128 })
+
         this.load.image('boulder', boulder_object)
         this.load.image('fireball', fireball_object)
         this.load.image('bg0', bg0)
