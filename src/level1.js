@@ -7,6 +7,9 @@ import player_run from '../src/assets/Player/monk_run.png'
 import player_atk_basic from '../src/assets/Player/monk_atk_basic.png'
 import player_sp_atk from '../src/assets/Player/monk_sp_atk.png'
 import player_super_atk from './assets/Player/monk_super_atk.png'
+import player_jump from './assets/Player/monk_jump.png'
+import player_falling from './assets/Player/monk_falling.png'
+
 import boulder_object from '../src/assets/Player/boulder.png'
 import fireball_object from '../src/assets/Player/fire_ball.png'
 
@@ -19,7 +22,7 @@ import bg4 from '../src/assets/level1_bg/clouds_mg_3.png'
 import bg5 from '../src/assets/level1_bg/clouds_mg_2.png'
 import bg6 from '../src/assets/level1_bg/clouds_mg_2.png'
 import bg7 from '../src/assets/level1_bg/clouds_mg_1.png'
-
+import platform from '../src/assets/level1_bg/platform.png'
 
 
 
@@ -53,6 +56,9 @@ export default class Level1 extends Phaser.Scene {
         this.load.spritesheet('player_atk_basic', player_atk_basic, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('player_sp_atk', player_sp_atk, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('player_super_atk', player_super_atk, { frameWidth: 288, frameHeight: 128 })
+        this.load.spritesheet('player_jump', player_jump, { frameWidth: 288, frameHeight: 128 })
+        this.load.spritesheet('player_falling', player_falling, { frameWidth: 288, frameHeight: 128 })
+
 
         this.load.image('boulder', boulder_object)
         this.load.image('fireball', fireball_object)
@@ -64,6 +70,7 @@ export default class Level1 extends Phaser.Scene {
         this.load.image('bg5', bg5)
         this.load.image('bg6', bg6)
         this.load.image('bg7', bg7)
+        this.load.image('platform', platform)
 
 
 
@@ -125,12 +132,11 @@ export default class Level1 extends Phaser.Scene {
 
 
 
+        const platforms = this.physics.add.staticGroup();
+        this.physics.add.collider(this.player, platforms)
 
-
-
-
-
-
+        platforms.create(100, 215, 'platform').setScale(5, .01).refreshBody();
+        this.player.setCollidesWith
 
 
 

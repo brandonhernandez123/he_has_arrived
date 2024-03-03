@@ -5,9 +5,9 @@ import Fireball from "../src/Fireball";
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'player_idle');
-         this.boulderWaitTime = false
-         this.fireBallWaitTime = false
-         this.specialWaitTime = false
+        this.boulderWaitTime = false
+        this.fireBallWaitTime = false
+        this.specialWaitTime = false
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
@@ -22,6 +22,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         });
 
         scene.anims.create({
+            key: 'player_jump',
+            frames: scene.anims.generateFrameNumbers('player_jump', { start: 0, end: 2 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'player_falling',
+            frames: scene.anims.generateFrameNumbers('player_falling', { start: 0, end: 2 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        scene.anims.create({
             key: 'player_run_anim',
             frames: scene.anims.generateFrameNumbers('player_run', { start: 0, end: 7 }),
             frameRate: 10,
@@ -32,7 +46,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             key: 'player_atk_basic',
             frames: scene.anims.generateFrameNumbers('player_atk_basic', { start: 0, end: 7 }),
             frameRate: 30,
-           
+
             repeat: 0
         });
 
@@ -43,129 +57,162 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             repeat: 0
         })
 
+        scene.anims.create({
+            key: 'player_super_atk',
+            frames: scene.anims.generateFrameNumbers('player_super_atk', { start: 0, end: 24 }),
+            framerate: 23,
+            repeat: 0
+        })
         this.currentState = 'idle';
         this.gameState = {
             cursors: scene.input.keyboard.createCursorKeys(),
             atk: scene.input.keyboard.addKey('Z'),
             sp_atk: scene.input.keyboard.addKey('X'),
             special: scene.input.keyboard.addKey('C')
-            
+
         };
 
         // this.cKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
         // this.zKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z)
 
 
-        scene.anims.create({
-            key: 'player_super_atk',
-            frames: scene.anims.generateFrameNumbers('player_super_atk', {start: 0, end: 24}),
-            framerate: 8,
-            repeat: 0
-        })
 
-        
 
-        this.on(Phaser.Animations.Events.ANIMATION_COMPLETE, function(animation){
-            if(animation.key === 'player_atk_basic'){
-                
+
+        this.on(Phaser.Animations.Events.ANIMATION_COMPLETE, function (animation) {
+            if (animation.key === 'player_atk_basic') {
+
                 this.spawnBoulder()
                 this.boulderWaitTime = true
-                
+                this.anims.play('player_idle_anim')
+                this.boulderGui = scene.add.image(this.x - 200, this.y - 200, 'boulder').setScale(0.01)
 
-                if(this.boulderWaitTime === true){
-                    this.scene.time.delayedCall(3000,() => {
+
+
+                if (this.boulderWaitTime === true) {
+                    this.scene.time.delayedCall(3000, () => {
                         this.boulderWaitTime = false
                         console.log('timer expired switching to true')
                     })
-        
-                    
+
+
                 }
 
-                
-            } else if (animation.key === 'player_sp_atk'){
+
+            } else if (animation.key === 'player_sp_atk') {
                 this.spawnFireball()
                 this.fireBallWaitTime = true
+                this.anims.play('player_idle_anim')
 
 
-                if(this.fireBallWaitTime === true){
-                    this.scene.time.delayedCall(3000,() => {
+                if (this.fireBallWaitTime === true) {
+                    this.scene.time.delayedCall(3000, () => {
                         this.fireBallWaitTime = false
                         console.log('fire : timer expired switching to true')
                     })
-        
-                    
+
+
                 }
-               
-                
+
+
+            } else if (animation.key === 'player_super_atk') {
+
+                this.specialWaitTime = true
+                this.anims.play('player_idle_anim')
+
+
+                if (this.specialWaitTime === true) {
+                    this.scene.time.delayedCall(5000, () => {
+                        this.specialWaitTime = false
+                        console.log('special : timer expired switching to true')
+                    })
+
+
+                }
+
+
             }
         }, this)
 
-        
-   
 
-        
+
+
+
 
 
 
     }
 
-   
+
 
 
     update() {
 
-        console.log(this.boulderWaitTime)
-        console.log('special wait time', this.specialWaitTime)
 
-        if (this.gameState.cursors.right.isDown) {
+        if (this.gameState.cursors.right.isDown && this.body.touching.down) {
             this.setVelocityX(200);
             this.flipX = false;
             this.currentState = 'running';
             this.anims.play('player_run_anim', true);
-        } else if (this.gameState.cursors.left.isDown) {
+        } else if (this.gameState.cursors.left.isDown && this.body.touching.down) {
             this.setVelocityX(-200);
             this.flipX = true;
             this.currentState = 'running';
             this.anims.play('player_run_anim', true);
-        } 
-        
-       
+        } else if (this.gameState.cursors.up.isDown && (this.body.blocked.down || this.body.touching.down)) {
+            this.setVelocityY(-400)
+            this.anims.play('player_jump', true)
+            console.log(this.anims.isPlaying)
+            console.log(this.anims.currentAnim)
+            this.currentState = 'jumping'
+        } else if (this.body.velocity.y > 0 && !this.body.touching.down) {
+            this.anims.play('player_falling', true)
+        } else if (this.body.velocity.y < 0) {
+            this.anims.play('player_jump', true)
+        } else if (this.gameState.cursors.right.isDown && this.gameState.cursors.up.isDown) {
+            this.setVelocityX(200)
+            this.setVelocityY(-200)
+            this.flipX = false
+            this.currentState = 'jumping'
 
-      
-        
-        else if (this.gameState.atk.isDown && this.currentState !== 'running') {
-            if(this.boulderWaitTime === false){
-               this.play('player_atk_basic', true);
-            this.currentState = 'attacking'; 
-            console.log(this.boulderWaitTime)
-            
-            } 
-            
-            
         }
 
-         else if (this.gameState.sp_atk.isDown && this.currentState !== 'running') {
 
-            if(this.fireBallWaitTime === false){
+
+
+
+        else if (this.gameState.atk.isDown && this.currentState !== 'running') {
+            if (this.boulderWaitTime === false) {
+                this.play('player_atk_basic', true);
+                this.currentState = 'attacking';
+
+            }
+
+
+        }
+
+        else if (this.gameState.sp_atk.isDown && this.currentState !== 'running') {
+
+            if (this.fireBallWaitTime === false) {
 
                 this.play('player_sp_atk', true)
                 this.currentState = 'attacking'
-                console.log(this.fireBallWaitTime)
 
             }
         }
 
-        else if (this.gameState.special.isDown && this.currentState !== 'running') {
-                if(this.specialWaitTime === false){
-                    this.play('player_super_atk', true);
-                this.currentState = 'attacking';  
-                } 
-                return
-              
-            
+        else if (this.gameState.special.isDown && this.currentState !== 'running' && this.body.touching.down) {
+            if (this.specialWaitTime === false) {
+                this.play('player_super_atk', true);
+                this.currentState = 'attacking';
+                console.log(this.specialWaitTime)
+            }
+
+
+
         }
-        
-        
+
+
 
         else {
             this.setVelocityX(0);
@@ -175,7 +222,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-      
+        if (this.currentState === 'jumping') {
+            this.setGravityY(400); // Adjust the gravity value based on your game
+        }
+
+        // Check if the player is on the ground to reset the jumping state
+        if (this.body.blocked.down || this.body.touching.down) {
+            this.currentState = 'idle';
+        }
+
+
 
 
     }
@@ -202,6 +258,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             })
 
         }
+
+
 
 
     }
@@ -238,7 +296,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-         
+
 
 
 
