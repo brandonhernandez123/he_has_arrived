@@ -14,6 +14,9 @@ import player_falling from './assets/Player/monk_falling.png'
 
 import boulder_object from '../src/assets/Player/boulder.png'
 import fireball_object from '../src/assets/Player/fire_ball.png'
+import flame from './assets/fire3.png'
+import rocks from './assets/rocks.png'
+import blood from './assets/bld.png'
 
 
 
@@ -33,6 +36,7 @@ import bg5 from '../src/assets/level1_bg/clouds_mg_2.png'
 import bg6 from '../src/assets/level1_bg/clouds_mg_2.png'
 import bg7 from '../src/assets/level1_bg/clouds_mg_1.png'
 import platform from '../src/assets/level1_bg/platform.png'
+import snowflake from './assets/snowflake.png'
 
 
 
@@ -86,6 +90,11 @@ export default class Level1 extends Phaser.Scene {
         this.load.image('bg6', bg6)
         this.load.image('bg7', bg7)
         this.load.image('platform', platform)
+        this.load.image('snowflake', snowflake)
+        this.load.image('flame', flame)
+        this.load.image('rocks', rocks)
+        this.load.image('blood', blood)
+
 
 
 
@@ -157,17 +166,22 @@ export default class Level1 extends Phaser.Scene {
         this.crystal_warrior.flipX = true
 
 
+        this.Collisions()
+       
 
-        this.physics.add.collider(this.player.boulderGroup, this.crystal_warrior, () => {
-            console.log('warrior hit')
-            this.crystal_warrior.damageTaken(20)
-            if (this.crystal_warrior.crystalWarriorHealth <= 0) {
-                this.crystal_warrior.charDead()
-                this.time.delayedCall(5000, () => {
-                    this.crystal_warrior.destroy()
-                }, this)
-            }
-        }, null, this)
+
+        const snowflakes = this.add.particles(160, 10, 'snowflake',
+        {
+           
+            color: [ 0xffffff ],
+            colorEase: 'quad.out',
+            lifespan: 6000,
+            angle: { min: -90, max: 180},
+            scale: { start: 0.1, end: 0.1, ease: 'sine.out' },
+            speed: 50,
+            advance: 2000,
+            blendMode: 'ADD'
+        });
 
 
 
@@ -199,4 +213,112 @@ export default class Level1 extends Phaser.Scene {
 
 
     }
+
+
+    Collisions(){
+        this.physics.add.collider(this.player.boulderGroup, this.crystal_warrior, () => {
+            this.dmgCounter = this.add.text(this.crystal_warrior.x, this.crystal_warrior.y, '20', {fontSize: '6px', color: '#ff0000'})
+            const rocks = this.add.particles(this.crystal_warrior.x, this.crystal_warrior.y + 30, 'rocks',
+            {
+               
+                
+                color: [0xb38c67, 0x8b7355, 0x6f5c4f], // Dirt colors
+                lifespan: 1000, // Shorter lifespan for a quicker explosion
+                angle: { min: 0, max: 360 }, // Adjusted angle range
+                scale: { start: 0.8, end: 0, ease: 'sine.out' }, // Adjusted scale values
+                speed: 150, // Increased speed for a quicker explosion
+                blendMode: 'ADD'
+            });
+
+            const blood = this.add.particles(this.crystal_warrior.x, this.crystal_warrior.y + 30, 'blood',
+            {
+               
+                
+                color: [0x8B0000, 0xB22222, 0xFF0000], // Different shades of red for a more realistic blood color
+    lifespan: 400, // Longer lifespan to allow the blood to linger a bit
+    angle: { min: 120, max: 360 },
+    scale: { start: 0.05, end: 0, ease: 'sine.out' }, // Adjusted scale values
+    speed: 300, // Moderate speed for a blood splatter
+    blendMode: 'NORMAL',
+    alpha: { start: 1, end: 1 }
+            });
+    
+            this.time.delayedCall(400, () => {
+                this.dmgCounter.destroy()
+                rocks.destroy()
+                blood.destroy()
+            })
+
+            
+            console.log('warrior hit')
+            this.crystal_warrior.damageTaken(20)
+            if (this.crystal_warrior.crystalWarriorHealth <= 0) {
+                this.crystal_warrior.charDead()
+                this.time.delayedCall(800, () => {
+                    this.crystal_warrior.destroy()
+                }, this)
+            }
+        }, null, this)
+
+
+
+
+
+        this.physics.add.collider(this.player.fireBallGroup, this.crystal_warrior, () => {
+            this.dmgCounter = this.add.text(this.crystal_warrior.x, this.crystal_warrior.y, '20', {fontSize: '6px', color: '#ff0000'})
+            const rocks = this.add.particles(this.crystal_warrior.x, this.crystal_warrior.y + 30, 'flame',
+            {
+               
+                
+                color: [0xb38c67, 0x8b7355, 0x6f5c4f], // Dirt colors
+                lifespan: 200, // Shorter lifespan for a quicker explosion
+                angle: { min: 0, max: 360 }, // Adjusted angle range
+                scale: { start: 0.2, end: 0, ease: 'sine.out' }, // Adjusted scale values
+                speed: 150, // Increased speed for a quicker explosion
+                blendMode: 'ADD'
+            });
+
+            const blood = this.add.particles(this.crystal_warrior.x, this.crystal_warrior.y + 30, 'blood',
+            {
+               
+                
+                color: [0x8B0000, 0xB22222, 0xFF0000], // Different shades of red for a more realistic blood color
+    lifespan: 400, // Longer lifespan to allow the blood to linger a bit
+    angle: { min: 120, max: 360 },
+    scale: { start: 0.05, end: 0, ease: 'sine.out' }, // Adjusted scale values
+    speed: 300, // Moderate speed for a blood splatter
+    blendMode: 'NORMAL',
+    alpha: { start: 1, end: 1 }
+            });
+    
+            this.time.delayedCall(300, () => {
+                this.dmgCounter.destroy()
+                rocks.destroy()
+                blood.destroy()
+            })
+
+            
+            console.log('warrior hit')
+            this.crystal_warrior.damageTaken(20)
+            if (this.crystal_warrior.crystalWarriorHealth <= 0) {
+                this.crystal_warrior.charDead()
+                this.time.delayedCall(800, () => {
+                    this.crystal_warrior.destroy()
+                }, this)
+            }
+        }, null, this)
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+    
 }

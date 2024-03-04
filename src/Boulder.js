@@ -8,7 +8,7 @@ export default class Boulder extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this)
 
 
-        this.setScale(0.02)
+        this.setScale(0.01)
 
         this.body.setGravity(0)
 

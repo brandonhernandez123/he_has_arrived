@@ -47,22 +47,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         scene.anims.create({
             key: 'player_atk_basic',
             frames: scene.anims.generateFrameNumbers('player_atk_basic', { start: 0, end: 7 }),
-            frameRate: 30,
+            frameRate: 24,
 
             repeat: 0
         });
 
         scene.anims.create({
             key: 'player_sp_atk',
-            frames: scene.anims.generateFrameNumbers('player_sp_atk', { start: 0, end: 6 }),
-            framerate: 30,
+            frames: scene.anims.generateFrameNumbers('player_sp_atk', { start: 0, end: 7 }),
+            framerate: 8,
             repeat: 0
         })
 
         scene.anims.create({
             key: 'player_super_atk',
             frames: scene.anims.generateFrameNumbers('player_super_atk', { start: 0, end: 24 }),
-            framerate: 23,
+            framerate: 2,
             repeat: 0
         })
         this.currentState = 'idle';
@@ -91,7 +91,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
                 if (this.boulderWaitTime === true) {
-                    this.scene.time.delayedCall(3000, () => {
+                    this.scene.time.delayedCall(2500, () => {
                         this.boulderWaitTime = false
                         console.log('timer expired switching to true')
                     })
@@ -138,6 +138,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
         this.boulderGroup = this.scene.physics.add.group()
+        this.fireBallGroup = this.scene.physics.add.group()
 
 
 
@@ -252,7 +253,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             const ballDirection = this.flipX ? -1 : 1;
 
             const fireBall = new Fireball(this.scene, ballX, ballY, 'fireball')
-
+            this.fireBallGroup.add(fireBall)
+           
             fireBall.setVelocityX(500 * ballDirection)
 
             if (fireBall.x > this.x * 3) {
