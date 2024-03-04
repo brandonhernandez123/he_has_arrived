@@ -10,7 +10,7 @@ export default class FireBall extends Phaser.Physics.Arcade.Sprite {
 
         this.setScale(0.04)
 
-        this.body.setGravity(0)
+        // this.body.setGravity(0)
 
 
 

@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import Boulder from '../src/Boulder'
 import Fireball from "../src/Fireball";
+import Special from "../src/Special";
+import Crystal_Warrior from "./Crystal_Warrior";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
@@ -10,9 +12,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.specialWaitTime = false
         scene.add.existing(this);
         scene.physics.add.existing(this);
-
         this.setCollideWorldBounds(true);
-        this.setSize(15, 120);
+        this.setSize(15, 40);
+        this.setOffset(135, 80)
 
         scene.anims.create({
             key: 'player_idle_anim',
@@ -72,8 +74,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         };
 
-        // this.cKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
-        // this.zKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z)
+
 
 
 
@@ -116,7 +117,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
             } else if (animation.key === 'player_super_atk') {
-
+                this.spawnSpecial()
                 this.specialWaitTime = true
                 this.anims.play('player_idle_anim')
 
@@ -136,12 +137,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-
-
+        this.boulderGroup = this.scene.physics.add.group()
 
 
 
     }
+
+
+
 
 
 
@@ -169,7 +172,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.anims.play('player_falling', true)
         } else if (this.body.velocity.y < 0) {
             this.anims.play('player_jump', true)
-        } else if (this.gameState.cursors.right.isDown && this.gameState.cursors.up.isDown) {
+        } else if (this.gameState.cursors.up.isDown && this.gameState.cursors.right.isDown) {
             this.setVelocityX(200)
             this.setVelocityY(-200)
             this.flipX = false
@@ -183,6 +186,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         else if (this.gameState.atk.isDown && this.currentState !== 'running') {
             if (this.boulderWaitTime === false) {
+                this.setVelocityX(0)
                 this.play('player_atk_basic', true);
                 this.currentState = 'attacking';
 
@@ -194,6 +198,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         else if (this.gameState.sp_atk.isDown && this.currentState !== 'running') {
 
             if (this.fireBallWaitTime === false) {
+                this.setVelocityX(0)
 
                 this.play('player_sp_atk', true)
                 this.currentState = 'attacking'
@@ -203,6 +208,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         else if (this.gameState.special.isDown && this.currentState !== 'running' && this.body.touching.down) {
             if (this.specialWaitTime === false) {
+                this.setVelocityX(0)
+
                 this.play('player_super_atk', true);
                 this.currentState = 'attacking';
                 console.log(this.specialWaitTime)
@@ -274,12 +281,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             const boulderDirection = this.flipX ? -1 : 1;
 
             const boulder = new Boulder(this.scene, boulderX, boulderY, 'boulder')
-
+            this.boulderGroup.add(boulder)
             boulder.setVelocityX(500 * boulderDirection)
 
             if (boulder.x > this.x * 3) {
                 boulder.destroy()
             }
+
+
+
 
             this.scene.time.delayedCall(3000, () => {
                 boulder.destroy
@@ -306,60 +316,97 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
+
+
+
+        }
+
+
+
+    }
+
+
+
+    spawnSpecial() {
+
+        if (!this.isSpecialSpawning) {
+            this.isSpecialSpawning = true
+
+            const specialDirection = this.flipX ? -40 : 40;
+            const specialX = this.x + specialDirection
+            const specialY = this.y
+
+
+            const specialObj = new Special(this.scene, specialX, specialY, 10, 50, 'red')
+
+
+
+
+
+            this.scene.time.delayedCall(500, () => {
+                specialObj.destroy()
+                this.isSpecialSpawning = false
+            })
+
         }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

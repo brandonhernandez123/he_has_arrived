@@ -1,7 +1,9 @@
 import Phaser from "phaser";
 import Player from './Player'
+import Crystal_Warrior from "./Crystal_Warrior";
 import Boulder from "./Boulder";
 import Fireball from "./Fireball";
+import Special from "./Special";
 import player_idle from '../src/assets/Player/monk_idle.png'
 import player_run from '../src/assets/Player/monk_run.png'
 import player_atk_basic from '../src/assets/Player/monk_atk_basic.png'
@@ -12,6 +14,14 @@ import player_falling from './assets/Player/monk_falling.png'
 
 import boulder_object from '../src/assets/Player/boulder.png'
 import fireball_object from '../src/assets/Player/fire_ball.png'
+
+
+
+
+import crystal_character_idle from '../src/assets/crystal_character/crystal_char_idle.png'
+import crystal_character_hit from '../src/assets/crystal_character/crystal_char_hit.png'
+import crystal_character_death from '../src/assets/crystal_character/crystal_char_death.png'
+
 
 //background imports
 import bg0 from '../src/assets/level1_bg/sky.png'
@@ -58,6 +68,11 @@ export default class Level1 extends Phaser.Scene {
         this.load.spritesheet('player_super_atk', player_super_atk, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('player_jump', player_jump, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('player_falling', player_falling, { frameWidth: 288, frameHeight: 128 })
+
+
+        this.load.spritesheet('crystal_char_idle', crystal_character_idle, { frameWidth: 288, frameHeight: 128 })
+        this.load.spritesheet('crystal_char_hit', crystal_character_hit, { frameWidth: 288, frameHeight: 128 })
+        this.load.spritesheet('crystal_char_death', crystal_character_death, { frameWidth: 288, frameHeight: 128 })
 
 
         this.load.image('boulder', boulder_object)
@@ -123,8 +138,8 @@ export default class Level1 extends Phaser.Scene {
         this.parallaxBg()
 
 
-
         this.player = new Player(this, 200, 100)
+        this.crystal_warrior = new Crystal_Warrior(this, 200, 100)
 
         this.cameras.main.setBounds(0, 0, 3000, 216)
 
@@ -134,15 +149,25 @@ export default class Level1 extends Phaser.Scene {
 
         const platforms = this.physics.add.staticGroup();
         this.physics.add.collider(this.player, platforms)
-
-        platforms.create(100, 215, 'platform').setScale(5, .01).refreshBody();
-        this.player.setCollidesWith
+        this.physics.add.collider(this.crystal_warrior, platforms)
 
 
+        platforms.create(100, 215, 'platform').setScale(200, .01).refreshBody();
+
+        this.crystal_warrior.flipX = true
 
 
 
-
+        this.physics.add.collider(this.player.boulderGroup, this.crystal_warrior, () => {
+            console.log('warrior hit')
+            this.crystal_warrior.damageTaken(20)
+            if (this.crystal_warrior.crystalWarriorHealth <= 0) {
+                this.crystal_warrior.charDead()
+                this.time.delayedCall(5000, () => {
+                    this.crystal_warrior.destroy()
+                }, this)
+            }
+        }, null, this)
 
 
 
@@ -161,6 +186,7 @@ export default class Level1 extends Phaser.Scene {
     update() {
 
         this.player.update()
+        this.crystal_warrior.update()
 
 
 
