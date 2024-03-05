@@ -40,6 +40,8 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
         this.crystalWarriorHealth = 100
         this.currentState = 'idle'
 
+        this.GravityOnImpact()
+
         this.hp = scene.add.text(this.x, this.y - 10, 'HP: ' + this.crystalWarriorHealth, {fontSize: '8px', fill: '#fff'})
 
 
@@ -68,24 +70,39 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
 
     charDead() {
         this.anims.play('crystal_char_death', true)
+        this.currentState = 'dead'
     }
 
 
     update() {
-        if (this.currentState !== 'hit') {
+        if (this.currentState !== 'hit' && this.crystalWarriorHealth > 0) {
             this.anims.play('crystal_char_idle', true)
         }
 
         
-        this.hp.x = this.x
-        this.hp.y = (this.y + 5)
-        console.log(this.crystalWarriorHealth)
-        this.hp.setText('HP: ' + this.crystalWarriorHealth)
+
+        if(this.crystalWarriorHealth > 0){
+            this.hp.x = this.x
+            this.hp.y = (this.y + 5)
+            console.log(this.crystalWarriorHealth)
+            this.hp.setText('HP: ' + this.crystalWarriorHealth)
+        } else {
+            this.hp.destroy()
+        }
+       
+
+      
 
 
 
 
+    }
 
 
+
+    GravityOnImpact(){
+        if(this.body.y < 0 && this.crystalWarriorHealth > 0){
+            this.setGravityY(600)
+        } 
     }
 }

@@ -160,6 +160,8 @@ export default class Level1 extends Phaser.Scene {
         this.physics.add.collider(this.player, platforms)
         this.physics.add.collider(this.crystal_warrior, platforms)
 
+        
+
 
         platforms.create(100, 215, 'platform').setScale(200, .01).refreshBody();
 
@@ -216,6 +218,8 @@ export default class Level1 extends Phaser.Scene {
 
 
     Collisions(){
+
+        //boulder collision
         this.physics.add.collider(this.player.boulderGroup, this.crystal_warrior, () => {
             this.dmgCounter = this.add.text(this.crystal_warrior.x, this.crystal_warrior.y, '20', {fontSize: '6px', color: '#ff0000'})
             const rocks = this.add.particles(this.crystal_warrior.x, this.crystal_warrior.y + 30, 'rocks',
@@ -261,7 +265,7 @@ export default class Level1 extends Phaser.Scene {
         }, null, this)
 
 
-
+// fireball collision
 
 
         this.physics.add.collider(this.player.fireBallGroup, this.crystal_warrior, () => {
@@ -311,6 +315,25 @@ export default class Level1 extends Phaser.Scene {
 
 
 
+        //special collision
+       this.physics.add.collider(this.player.specialGroup, this.crystal_warrior,() => {
+        this.crystal_warrior.damageTaken(1)
+        this.crystal_warrior.setVelocityY(-400)
+        if (this.crystal_warrior.crystalWarriorHealth <= 0) {
+            this.crystal_warrior.charDead()
+            this.time.delayedCall(800, () => {
+                this.crystal_warrior.destroy()
+            }, this)
+        }
+       })
+
+
+
+
+
+    }
+
+    spawnEnemy(){
 
     }
 

@@ -7,6 +7,7 @@ export default class Special extends Phaser.GameObjects.Rectangle {
         scene.add.existing(this)
         // scene.physics.add.existing(this)
         this.setOrigin(0, 0)
+        this.setVisible(false)
 
 
 
