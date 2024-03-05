@@ -42,7 +42,7 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
 
         this.GravityOnImpact()
 
-        this.hp = scene.add.text(this.x, this.y - 10, 'HP: ' + this.crystalWarriorHealth, {fontSize: '8px', fill: '#fff'})
+        this.hp = scene.add.text(this.x, this.y - 10, 'HP: ' + this.crystalWarriorHealth, { fontSize: '8px', fill: '#fff' })
 
 
         this.on(Phaser.Animations.Events.ANIMATION_COMPLETE, function (animation) {
@@ -64,7 +64,7 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
         this.currentState = 'hit'
         this.anims.play('crystal_char_hit', true)
         this.hp.setText('hp: ', this.crystalWarriorHealth)
-        
+
 
     }
 
@@ -79,19 +79,18 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
             this.anims.play('crystal_char_idle', true)
         }
 
-        
 
-        if(this.crystalWarriorHealth > 0){
+
+        if (this.crystalWarriorHealth > 0) {
             this.hp.x = this.x
             this.hp.y = (this.y + 5)
-            console.log(this.crystalWarriorHealth)
             this.hp.setText('HP: ' + this.crystalWarriorHealth)
         } else {
             this.hp.destroy()
         }
-       
 
-      
+
+
 
 
 
@@ -100,9 +99,9 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
 
 
 
-    GravityOnImpact(){
-        if(this.body.y < 0 && this.crystalWarriorHealth > 0){
+    GravityOnImpact() {
+        if (this.body.y < 0 && this.crystalWarriorHealth > 0) {
             this.setGravityY(600)
-        } 
+        }
     }
 }
