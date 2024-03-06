@@ -25,6 +25,7 @@ import blood from './assets/bld.png'
 import crystal_character_idle from '../src/assets/crystal_character/crystal_char_idle.png'
 import crystal_character_hit from '../src/assets/crystal_character/crystal_char_hit.png'
 import crystal_character_death from '../src/assets/crystal_character/crystal_char_death.png'
+import crystal_character_walk from './assets/crystal_character/crystal_warrior_walk.png'
 
 
 //background imports
@@ -79,6 +80,8 @@ export default class Level1 extends Phaser.Scene {
         this.load.spritesheet('crystal_char_idle', crystal_character_idle, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('crystal_char_hit', crystal_character_hit, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('crystal_char_death', crystal_character_death, { frameWidth: 288, frameHeight: 128 })
+        this.load.spritesheet('crystal_char_walk', crystal_character_walk, { frameWidth: 288, frameHeight: 128 })
+
 
 
         this.load.image('boulder', boulder_object)
@@ -257,7 +260,7 @@ export default class Level1 extends Phaser.Scene {
 
 
             console.log('warrior hit')
-            this.crystal_warrior.damageTaken(20)
+            this.crystal_warrior.damageTaken(5)
             if (this.crystal_warrior.crystalWarriorHealth <= 0) {
                 this.crystal_warrior.charDead()
                 this.time.delayedCall(800, () => {
@@ -271,6 +274,7 @@ export default class Level1 extends Phaser.Scene {
 
 
         this.physics.add.collider(this.player.fireBallGroup, this.crystal_warrior, () => {
+            this.player.fireBallGroup.clear()
             this.dmgCounter = this.add.text(this.crystal_warrior.x, this.crystal_warrior.y, '20', { fontSize: '6px', color: '#ff0000' })
             const rocks = this.add.particles(this.crystal_warrior.x, this.crystal_warrior.y + 30, 'flame',
                 {
@@ -305,7 +309,7 @@ export default class Level1 extends Phaser.Scene {
 
 
             console.log('warrior hit')
-            this.crystal_warrior.damageTaken(20)
+            this.crystal_warrior.damageTaken(5)
             if (this.crystal_warrior.crystalWarriorHealth <= 0) {
                 this.crystal_warrior.charDead()
                 this.time.delayedCall(800, () => {

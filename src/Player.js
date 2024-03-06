@@ -18,10 +18,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.currentState
         this.gameState = {
             cursors: scene.input.keyboard.createCursorKeys(),
-            atk: scene.input.keyboard.addKey('Z'),
-            sp_atk: scene.input.keyboard.addKey('X'),
-            special: scene.input.keyboard.addKey('C'),
-            roll: scene.input.keyboard.addKey('SHIFT')
+            atk: scene.input.keyboard.addKey('J'),
+            sp_atk: scene.input.keyboard.addKey('K'),
+            special: scene.input.keyboard.addKey('L'),
+            roll: scene.input.keyboard.addKey('SHIFT'),
+            right: scene.input.keyboard.addKey('D'),
+            left: scene.input.keyboard.addKey('A'),
+            jump: scene.input.keyboard.addKey("SPACE")
 
         };
 
@@ -52,16 +55,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     update() {
 
         this.PlayerMovement()
+        this.PlayerAttacks()
 
-        if (Phaser.Input.Keyboard.JustDown(this.gameState.roll) && this.rollWaitTime === false) {
-            console.log("shift key pressed")
-            this.currentState = 'rolling'
-            this.rollWaitTime = true;
-            this.anims.stop()
-            this.anims.play('player_roll', true)
-        }
 
-        console.log(this.currentState)
+
 
 
 
@@ -120,32 +117,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.scene.time.delayedCall(3000, () => {
                 boulder.destroy
                 this.isBoulderSpawning = false
-            })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        }
+            })}
 
 
 
@@ -190,7 +162,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             key: 'player_idle_anim',
             frames: this.scene.anims.generateFrameNumbers('player_idle', { start: 0, end: 5 }),
             frameRate: 4,
-            repeat: 0
+            repeat: -1
         });
 
         this.scene.anims.create({
@@ -232,14 +204,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.scene.anims.create({
             key: 'player_super_atk',
             frames: this.scene.anims.generateFrameNumbers('player_super_atk', { start: 0, end: 24 }),
-            framerate: 2,
+            frameRate: 18,
             repeat: 0
         })
 
         this.scene.anims.create({
             key: 'player_roll',
             frames: this.scene.anims.generateFrameNumbers('player_roll', { start: 0, end: 5 }),
-            frameRate: 10,
+            frameRate: 20,
             repeat: 0
         })
     }
@@ -253,7 +225,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
                 this.spawnBoulder()
                 this.boulderWaitTime = true
-                this.anims.play('player_idle_anim')
                 this.boulderGui = this.scene.add.image(this.x - 200, this.y - 200, 'boulder').setScale(0.01)
 
 
@@ -271,7 +242,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             } else if (animation.key === 'player_sp_atk') {
                 this.spawnFireball()
                 this.fireBallWaitTime = true
-                this.anims.play('player_idle_anim')
 
 
                 if (this.fireBallWaitTime === true) {
@@ -287,7 +257,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             } else if (animation.key === 'player_super_atk') {
                 this.spawnSpecial()
                 this.specialWaitTime = true
-                this.anims.play('player_idle_anim')
 
 
                 if (this.specialWaitTime === true) {
@@ -301,8 +270,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
             } else if (animation.key === 'player_roll') {
-                console.log('animation completed')
-                this.rollWaitTime = false
+                this.rollWaitTime = true
+                this.scene.time.delayedCall(600, () => {
+                    this.rollWaitTime = false
+
+                })
+            } else if (animation.key === 'player_run_anim') {
             }
         }, this)
     }
@@ -322,70 +295,35 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     PlayerMovement() {
 
-
-
-
-
-
-
-
-        if (this.gameState.cursors.right.isDown && this.body.touching.down) {
-            this.setVelocityX(200);
-            this.flipX = false;
-            this.currentState = 'running';
-            this.anims.play('player_run_anim', true);
-        } else if (this.gameState.cursors.left.isDown && this.body.touching.down && this.currentState !== 'running') {
-            this.setVelocityX(-200);
-            this.flipX = true;
-            this.currentState = 'running';
-            this.anims.play('player_run_anim', true);
-        }
-        // } else if (this.gameState.cursors.up.isDown && (this.body.blocked.down || this.body.touching.down)) {
-        //     this.setVelocityY(-400)
-        //     this.anims.play('player_jump', true)
-        //     console.log(this.anims.isPlaying)
-        //     console.log(this.anims.currentAnim)
-        //     this.currentState = 'jumping'
-        // } else if (this.body.velocity.y > 0 && !this.body.touching.down) {
-        //     this.anims.play('player_falling', true)
-        // } else if (this.body.velocity.y < 0) {
-        //     this.anims.play('player_jump', true)
-        // } else if (this.gameState.cursors.up.isDown && this.gameState.cursors.right.isDown) {
-        //     this.setVelocityX(200)
-        //     this.setVelocityY(-200)
-        //     this.flipX = false
-        //     this.currentState = 'jumping'
-
-        // }
-
-
-
-
-
-
-
-
+        if(this.gameState.right.isDown && this.body.touching.down){
+            this.setVelocityX(150)
+            this.anims.play('player_run_anim', true)
+            this.flipX = false
+        } else if(this.gameState.left.isDown && this.body.touching.down){
+            this.setVelocityX(-150)
+            this.anims.play('player_run_anim', true)
+            this.flipX = true
+        } else if(Phaser.Input.Keyboard.JustDown(this.gameState.roll) && this.rollWaitTime === false && this.body.touching.down){
+            const facingDir = this.flipX ? -2000 : 2000
+            this.setVelocityX(facingDir)
+            this.anims.play('player_roll', true)
+            
+        }   
+        
+        
         else {
-            this.anims.stop()
-            this.currentState = 'idle'
             this.setVelocityX(0)
-            // this.StartIdle()
-
-
-
-
+            this.anims.playAfterDelay('player_idle_anim', 18)
         }
 
 
 
-        if (this.currentState === 'jumping') {
-            this.setGravityY(400); // Adjust the gravity value based on your game
+
+        if(this.body.velocity.y < 0){
+            this.anims.play('player_jump')
         }
 
-        // Check if the player is on the ground to reset the jumping state
-        // if (this.body.blocked.down || this.body.touching.down && this.currentState !== 'rolling') {
-        //     this.currentState = 'idle';
-        // }
+
 
     }
 
@@ -400,7 +338,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
     PlayerAttacks() {
-        if (this.gameState.atk.isDown && this.currentState !== 'running') {
+        if (Phaser.Input.Keyboard.JustDown(this.gameState.atk)) {
             if (this.boulderWaitTime === false) {
                 this.setVelocityX(0)
                 this.play('player_atk_basic', true);
@@ -411,7 +349,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         }
 
-        else if (this.gameState.sp_atk.isDown && this.currentState !== 'running') {
+        else if (Phaser.Input.Keyboard.JustDown(this.gameState.sp_atk)) {
 
             if (this.fireBallWaitTime === false) {
                 this.setVelocityX(0)
@@ -422,7 +360,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             }
         }
 
-        else if (this.gameState.special.isDown && this.currentState !== 'running' && this.body.touching.down) {
+        else if (Phaser.Input.Keyboard.JustDown(this.gameState.special)) {
             if (this.specialWaitTime === false) {
                 this.setVelocityX(0)
 
@@ -438,13 +376,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
 
-    StartIdle() {
-        this.scene.time.delayedCall(800, () => {
 
-            this.currentState = 'idle'
-            this.anims.play('player_idle_anim', true)
-        })
-    }
 
 
 
