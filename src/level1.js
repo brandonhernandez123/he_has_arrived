@@ -29,14 +29,18 @@ import crystal_character_death from '../src/assets/crystal_character/crystal_cha
 import crystal_character_walk from './assets/crystal_character/crystal_warrior_walk.png'
 import crystal_portrait from './assets/crystal_character/crystal_mauler.png'
 
+import eclipsor_idle from './assets/Eclipsor/eclipsor_idle.png'
+import eclipsor_walk from './assets/Eclipsor/eclipsor_walk.png'
+import eclipsor_fly from './assets/Eclipsor/eclipsor_fly.png'
+import eclipsor_atk1 from './assets/Eclipsor/eclipsor_atk1.png'
+
+
+
+
 
 //background imports
 import bg0 from '../src/assets/level1_bg/Battleground1.png'
-import bg1 from '../src/assets/level1_bg/ruins_bg.png'
-import bg2 from '../src/assets/level1_bg/hills&trees.png'
-import bg3 from '../src/assets/level1_bg/ruins2.png'
-import bg4 from '../src/assets/level1_bg/ruins.png'
-import bg5 from '../src/assets/level1_bg/statue.png'
+
 
 import platform from '../src/assets/level1_bg/platform.png'
 import snowflake from './assets/snowflake.png'
@@ -82,6 +86,13 @@ export default class Level1 extends Phaser.Scene {
         this.load.spritesheet('crystal_char_hit', crystal_character_hit, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('crystal_char_death', crystal_character_death, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('crystal_char_walk', crystal_character_walk, { frameWidth: 288, frameHeight: 128 })
+
+
+
+        this.load.spritesheet('eclipsor_idle', eclipsor_idle, { frameWidth: 192, frameHeight: 112 })
+        this.load.spritesheet('eclipsor_walk', eclipsor_walk, { frameWidth: 192, frameHeight: 122 })
+        this.load.spritesheet('eclipsor_fly', eclipsor_fly, { frameWidth: 192, frameHeight: 112 })
+        this.load.spritesheet('eclipsor_atk1', eclipsor_atk1, { frameWidth: 192, frameHeight: 112 })
 
 
 
@@ -136,7 +147,7 @@ export default class Level1 extends Phaser.Scene {
         this.parallaxBg()
 
 
-        this.player = new Player(this, 200, 100)
+        this.player = new Player(this, 50, 100)
         this.crystal_warrior = new Crystal_Warrior(this, 350, 100)
         this.cameras.main.setBounds(0, 0, 480, 500);
         this.cameras.main.startFollow(this.player, true, 0.5, 0.5);
@@ -446,7 +457,24 @@ export default class Level1 extends Phaser.Scene {
             });
 
 
+            if (this.nextLine > 22) {
+                console.log("enter eclipso")
+                const flashRectangle = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xffffff);
+                flashRectangle.setAlpha(0); // Set initial alpha to transparent
 
+                // Tween the alpha property to make it flash
+                this.tweens.add({
+                    targets: flashRectangle,
+                    alpha: 1, // Target alpha value (fully opaque)
+                    duration: 200, // Duration of the tween in milliseconds
+                    ease: 'Linear',
+                    yoyo: true, // Makes the tween reverse back to the initial state
+                    repeat: 0, // Number of times to repeat (0 means don't repeat)
+                    onComplete: function () {
+                        flashRectangle.setAlpha(0); // Reset alpha to transparent after the tween completes
+                    }
+                });
+            }
 
 
         }
