@@ -13,7 +13,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
         this.setSize(15, 40);
         this.setOffset(135, 80)
-
+        this.inDialogue = false;
 
         this.currentState
         this.gameState = {
@@ -54,8 +54,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     update() {
 
-        this.PlayerMovement()
-        this.PlayerAttacks()
+        this.InCutscene()
+
+
+        if (this.inDialogue === false) {
+            this.PlayerMovement()
+            this.PlayerAttacks()
+        }
+
 
 
 
@@ -117,7 +123,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.scene.time.delayedCall(3000, () => {
                 boulder.destroy
                 this.isBoulderSpawning = false
-            })}
+            })
+        }
 
 
 
@@ -295,22 +302,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     PlayerMovement() {
 
-        if(this.gameState.right.isDown && this.body.touching.down){
+        if (this.gameState.right.isDown && this.body.touching.down) {
             this.setVelocityX(150)
             this.anims.play('player_run_anim', true)
             this.flipX = false
-        } else if(this.gameState.left.isDown && this.body.touching.down){
+        } else if (this.gameState.left.isDown && this.body.touching.down) {
             this.setVelocityX(-150)
             this.anims.play('player_run_anim', true)
             this.flipX = true
-        } else if(Phaser.Input.Keyboard.JustDown(this.gameState.roll) && this.rollWaitTime === false && this.body.touching.down){
+        } else if (Phaser.Input.Keyboard.JustDown(this.gameState.roll) && this.rollWaitTime === false && this.body.touching.down) {
             const facingDir = this.flipX ? -2000 : 2000
             this.setVelocityX(facingDir)
             this.anims.play('player_roll', true)
-            
-        }   
-        
-        
+
+        }
+
+
         else {
             this.setVelocityX(0)
             this.anims.playAfterDelay('player_idle_anim', 18)
@@ -319,7 +326,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-        if(this.body.velocity.y < 0){
+        if (this.body.velocity.y < 0) {
             this.anims.play('player_jump')
         }
 
@@ -373,8 +380,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         }
 
+
     }
 
+    InCutscene() {
+        if (this.inDialogue === true) {
+            this.setVelocityX(0)
+            this.anims.play('player_idle_anim', true)
+        }
+
+    }
 
 
 

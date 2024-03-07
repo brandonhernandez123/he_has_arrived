@@ -17,6 +17,8 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
         this.CreateAnims()
         this.timeToFlip = false
         this.hit = false
+        this.inDialogue = false;
+
 
 
         this.crystalWarriorHealth = 100
@@ -63,8 +65,13 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
 
 
     update() {
-       this.Patrolling()
-        this.TimeToFlip()
+        this.InCutscene()
+
+        if (this.inDialogue === false) {
+            this.Patrolling()
+            this.TimeToFlip()
+        }
+
 
 
         if (this.crystalWarriorHealth > 0) {
@@ -93,7 +100,7 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    CreateAnims(){
+    CreateAnims() {
 
         this.scene.anims.create({
             key: 'crystal_char_idle',
@@ -126,42 +133,53 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
 
 
 
-    Patrolling(){
+    Patrolling() {
 
 
-        
-       
 
 
-       if(this.attacking === false && this.crystalWarriorHealth > 0 && this.timeToFlip === false && this.hit === false){
-        this.setVelocityX(-20)
-        this.anims.play('crystal_char_walk', true)
-        this.flipX = true
-         
-       } else if (this.attacking === false && this.crystalWarriorHealth > 0 && this.timeToFlip === true && this.hit === false){
 
-        this.setVelocityX(20)
-        this.anims.play('crystal_char_walk', true)
-        this.flipX = false
-       
-       }
+
+        if (this.attacking === false && this.crystalWarriorHealth > 0 && this.timeToFlip === false && this.hit === false) {
+            this.setVelocityX(-20)
+            this.anims.play('crystal_char_walk', true)
+            this.flipX = true
+
+        } else if (this.attacking === false && this.crystalWarriorHealth > 0 && this.timeToFlip === true && this.hit === false) {
+
+            this.setVelocityX(20)
+            this.anims.play('crystal_char_walk', true)
+            this.flipX = false
+
+        }
     }
 
-    TimeToFlip(){
+    TimeToFlip() {
 
-        if(this.timeToFlip === false && this.crystalWarriorHealth > 0 && this.hit === false){
-            this.scene.time.delayedCall(4000, () =>{
+        if (this.timeToFlip === false && this.crystalWarriorHealth > 0 && this.hit === false) {
+            this.scene.time.delayedCall(4000, () => {
                 this.timeToFlip = true
-    
-               
-            })
-        } else if (this.timeToFlip === true && this.crystalWarriorHealth > 0 && this.hit === false){
-           this.scene.time.delayedCall(4000, () =>{
-            this.timeToFlip = false
-        }) 
-        }
-        
 
-        
+
+            })
+        } else if (this.timeToFlip === true && this.crystalWarriorHealth > 0 && this.hit === false) {
+            this.scene.time.delayedCall(4000, () => {
+                this.timeToFlip = false
+            })
+        }
+
+
+
+    }
+
+    InCutscene() {
+        if (this.inDialogue === true) {
+            this.setVelocityX(0)
+            this.anims.play('crystal_char_idle', true)
+
+
+
+        }
+
     }
 }

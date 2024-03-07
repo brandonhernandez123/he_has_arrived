@@ -12,6 +12,7 @@ import player_super_atk from './assets/Player/monk_super_atk.png'
 import player_jump from './assets/Player/monk_jump.png'
 import player_falling from './assets/Player/monk_falling.png'
 import player_roll from './assets/Player/monk_roll.png'
+import player_portrait from './assets/Player/ground_monk.png'
 
 import boulder_object from '../src/assets/Player/boulder.png'
 import fireball_object from '../src/assets/Player/fire_ball.png'
@@ -26,17 +27,17 @@ import crystal_character_idle from '../src/assets/crystal_character/crystal_char
 import crystal_character_hit from '../src/assets/crystal_character/crystal_char_hit.png'
 import crystal_character_death from '../src/assets/crystal_character/crystal_char_death.png'
 import crystal_character_walk from './assets/crystal_character/crystal_warrior_walk.png'
+import crystal_portrait from './assets/crystal_character/crystal_mauler.png'
 
 
 //background imports
-import bg0 from '../src/assets/level1_bg/sky.png'
-import bg1 from '../src/assets/level1_bg/cloud_lonely.png'
-import bg2 from '../src/assets/level1_bg/clouds_bg.png'
-import bg3 from '../src/assets/level1_bg/glacial_mountains.png'
-import bg4 from '../src/assets/level1_bg/clouds_mg_3.png'
-import bg5 from '../src/assets/level1_bg/clouds_mg_2.png'
-import bg6 from '../src/assets/level1_bg/clouds_mg_2.png'
-import bg7 from '../src/assets/level1_bg/clouds_mg_1.png'
+import bg0 from '../src/assets/level1_bg/Battleground1.png'
+import bg1 from '../src/assets/level1_bg/ruins_bg.png'
+import bg2 from '../src/assets/level1_bg/hills&trees.png'
+import bg3 from '../src/assets/level1_bg/ruins2.png'
+import bg4 from '../src/assets/level1_bg/ruins.png'
+import bg5 from '../src/assets/level1_bg/statue.png'
+
 import platform from '../src/assets/level1_bg/platform.png'
 import snowflake from './assets/snowflake.png'
 
@@ -57,7 +58,7 @@ export default class Level1 extends Phaser.Scene {
     }
 
 
-
+    nextLine = 0
 
 
 
@@ -87,18 +88,15 @@ export default class Level1 extends Phaser.Scene {
         this.load.image('boulder', boulder_object)
         this.load.image('fireball', fireball_object)
         this.load.image('bg0', bg0)
-        this.load.image('bg1', bg1)
-        this.load.image('bg2', bg2)
-        this.load.image('bg3', bg3)
-        this.load.image('bg4', bg4)
-        this.load.image('bg5', bg5)
-        this.load.image('bg6', bg6)
-        this.load.image('bg7', bg7)
+
+
         this.load.image('platform', platform)
         this.load.image('snowflake', snowflake)
         this.load.image('flame', flame)
         this.load.image('rocks', rocks)
         this.load.image('blood', blood)
+        this.load.image('monk_portrait', player_portrait)
+        this.load.image('crystal_portrait', crystal_portrait)
 
 
 
@@ -115,30 +113,16 @@ export default class Level1 extends Phaser.Scene {
 
 
 
-
     parallaxBg() {
-        const bgWidth = this.game.config.width * 4; // Adjust the multiplication factor based on your needs
+        const bgKey = 'bg0'; // replace 'background' with your actual image key
+        const bg = this.add.image(0, 0, bgKey).setOrigin(0, 0);
 
-        this.bg_0 = this.add.tileSprite(0, 0, bgWidth, this.game.config.height, 'bg0').setOrigin(0, 0);
-        this.bg_1 = this.add.tileSprite(0, 0, bgWidth, this.game.config.height, 'bg1').setOrigin(0, 0);
-        this.bg_2 = this.add.tileSprite(0, 0, bgWidth, this.game.config.height, 'bg2').setOrigin(0, 0);
-        this.bg_3 = this.add.tileSprite(0, 0, bgWidth, this.game.config.height, 'bg3').setOrigin(0, 0);
-        this.bg_4 = this.add.tileSprite(0, 0, bgWidth, this.game.config.height, 'bg4').setOrigin(0, 0);
-        this.bg_5 = this.add.tileSprite(0, 0, bgWidth, this.game.config.height, 'bg5').setOrigin(0, 0);
-        this.bg_6 = this.add.tileSprite(0, 0, bgWidth, this.game.config.height, 'bg6').setOrigin(0, 0);
-        this.bg_7 = this.add.tileSprite(0, 0, bgWidth, this.game.config.height, 'bg7').setOrigin(0, 0);
+        // Make the background fill the entire scene's width and height
+        bg.displayWidth = this.game.config.width;
+        bg.displayHeight = this.game.config.height - 40;
 
-        this.bg_0.setScrollFactor(0);
-        this.bg_1.setScrollFactor(0.1);
-        this.bg_2.setScrollFactor(0.2);
-        this.bg_3.setScrollFactor(0.3);
-        this.bg_4.setScrollFactor(0.4);
-        this.bg_5.setScrollFactor(0.5);
-        this.bg_6.setScrollFactor(0.6);
-        this.bg_7.setScrollFactor(0.7);
-
-
-
+        // Set the scroll factor to 0 to make it static (non-scrolling)
+        bg.setScrollFactor(0);
     }
 
 
@@ -154,10 +138,11 @@ export default class Level1 extends Phaser.Scene {
 
         this.player = new Player(this, 200, 100)
         this.crystal_warrior = new Crystal_Warrior(this, 350, 100)
+        this.cameras.main.setBounds(0, 0, 480, 500);
+        this.cameras.main.startFollow(this.player, true, 0.5, 0.5);
 
-        this.cameras.main.setBounds(0, 0, 3000, 216)
-
-        this.cameras.main.startFollow(this.player, false, 0.5, 0.5)
+        // Adjust the starting position of the camera to cover more initial area
+        this.cameras.main.centerOn(960, 540); // Centered on the middle of the scene
 
 
 
@@ -165,12 +150,27 @@ export default class Level1 extends Phaser.Scene {
         this.physics.add.collider(this.player, platforms)
         this.physics.add.collider(this.crystal_warrior, platforms)
 
+        const ground = this.add.rectangle(0, 280, 1920, 80, 0x8B4513); // (x, y, width, height, color)
+
+
+        // Enable physics for the ground
+        this.physics.add.existing(ground, true);
+
+        // Make the ground static (immovable)
+        ground.body.immovable = true;
+
+        // Add a collider between the player and the ground
+        this.physics.add.collider(this.player, ground);
+        this.physics.add.collider(this.crystal_warrior, ground);
 
 
 
-        platforms.create(100, 215, 'platform').setScale(200, .01).refreshBody();
+
+        // platforms.create(100, 1920, 'platform').setScale(.50, .04).refreshBody();
 
         this.crystal_warrior.flipX = true
+
+        this.dialogueActive = true
 
 
         this.Collisions()
@@ -205,6 +205,8 @@ export default class Level1 extends Phaser.Scene {
 
 
     update() {
+
+        this.Dialogue()
 
         this.player.update()
         this.crystal_warrior.update()
@@ -339,7 +341,116 @@ export default class Level1 extends Phaser.Scene {
 
     }
 
-    spawnEnemy() {
+    Dialogue() {
+        if (this.dialogueActive === true) {
+
+
+            this.crystal_warrior.inDialogue = true
+            this.player.inDialogue = true
+
+
+            const increment = () => {
+                this.nextLine++
+                console.log(this.nextLine)
+            }
+
+
+
+
+            this.dialogueBox = this.add.rectangle(240, 100, 400, 85, 0x000000)
+
+
+
+            this.dialogueTextArr = [
+                "Ahh, Finally Awake. You took your sweet time aint ya",
+                "How... How is this possible, I died!",
+                "Ya sure did, one hundred years ago",
+                "Do you care to explain, what in the elemental high supreme is going on!",
+                "The elemental High Supreme turned out to be fabricated haha",
+                "Is really now the time to joke around, explain to me why I am alive and here!",
+                "I apologize Master Zenith... The world is in dissarray, the Elemental Families are at war with one another",
+                "Ok and what exactly does this have to do with me! I'm supposed to be dead!",
+                "Master Zenith, you are the hero of legend, the master of elemental warfare, you are the last master to manipulate all the elements",
+                "Anyone can do that!",
+                "Not anymore....",
+                "Explain!",
+                "I am the leader of the Crystal Family, I am the last of my kind that can manipulate crystals",
+                "All the other leaders are the last of their kind, not even their children have the ability to manipulate Elements.",
+                "One Hundred years ago, a curse was brought upon all the families. Us elemental wielders are the last of our kind",
+                "The night you fended off over 1000 Darkness bringers and died, that night the Elemental Crown was taken from the Elemental Supremes grave and destroyed",
+                "I failed the world, one hundred years ago. You should have not brought me back to life!",
+                "Master, it took us years to find a shard of the Elemental Crown... All to bring you back",
+                "I left the crystal family ages ago on a journey to bring you back.. We need your help",
+                "The very same being that killed you one hundred years ago, is back.. Eclipsor is back! ",
+                "I believe that together we can stop him...",
+                "He has possesed all the leaders of the Elemental Families and started a war.",
+                "Only you have the spiritual power to free them!"
+
+
+
+            ];
+
+
+            this.displayPortrait = [
+                'crystal_portrait',
+                'monk_portrait',
+                'crystal_portrait',
+                'monk_portrait',
+                'crystal_portrait',
+                'monk_portrait',
+                'crystal_portrait',
+                'monk_portrait',
+                'crystal_portrait',
+                'monk_portrait',
+                'crystal_portrait',
+                'monk_portrait',
+                'crystal_portrait',
+                'crystal_portrait',
+                'crystal_portrait',
+                'crystal_portrait',
+                'monk_portrait',
+                'crystal_portrait',
+                'crystal_portrait',
+                'crystal_portrait',
+                'crystal_portrait',
+                'crystal_portrait',
+                'crystal_portrait',
+
+            ]
+
+            this.add.image(80, 90, this.displayPortrait[this.nextLine])
+
+
+
+
+            this.dialogueText = this.add.text(130, 80, this.dialogueTextArr[this.nextLine], {
+                fontSize: '12px',
+                fill: '#fff',
+                wordWrap: { width: 280 }
+            });
+
+
+
+
+
+            this.nextButton = this.add.text(400, 120, 'Next', {
+                fontSize: '8px',
+                fill: '#fff',
+                backgroundColor: '#00f',
+                padding: { x: 5, y: 5 },
+                borderRadius: 5
+            });
+            this.nextButton.setInteractive();
+            this.nextButton.on('pointerdown', () => {
+                increment()
+            });
+
+
+
+
+
+        }
+
 
     }
 
