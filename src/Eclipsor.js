@@ -1,12 +1,17 @@
 import Phaser from "phaser";
 
-export default class Eclipsor extends Phaser.Physics.Arcade.Sprite() {
+export default class Eclipsor extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'eclipsor_idle')
+
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+        this.setCollideWorldBounds(true);
         //create under here
-        this.Animations()
+        this.CreateAnimations()
 
-
+        this.setSize(60, 100);
+        this.setOffset(80, 30)
 
 
 
@@ -29,29 +34,29 @@ export default class Eclipsor extends Phaser.Physics.Arcade.Sprite() {
 
 
     //generate anims start here
-    Animations() {
-        this.scene.anim.create({
+    CreateAnimations() {
+        this.scene.anims.create({
             key: 'eclipsor_idle',
             frames: this.scene.anims.generateFrameNumbers('eclipsor_idle', { start: 0, end: 14 }),
             frameRate: 8,
             repeat: -1
         })
 
-        this.scene.anim.create({
+        this.scene.anims.create({
             key: 'eclipsor_walk',
             frames: this.scene.anims.generateFrameNumbers('eclipsor_walk', { start: 0, end: 11 }),
             frameRate: 8,
             repeat: -1
         })
 
-        this.scene.anim.create({
+        this.scene.anims.create({
             key: 'eclipsor_fly',
             frames: this.scene.anims.generateFrameNumbers('eclipsor_fly', { start: 0, end: 5 }),
             frameRate: 8,
             repeat: -1
         })
 
-        this.scene.anim.create({
+        this.scene.anims.create({
             key: 'eclipsor_atk1',
             frames: this.scene.anims.generateFrameNumbers('eclipsor_atk1', { start: 0, end: 6 }),
             frameRate: 8,

@@ -29,10 +29,13 @@ import crystal_character_death from '../src/assets/crystal_character/crystal_cha
 import crystal_character_walk from './assets/crystal_character/crystal_warrior_walk.png'
 import crystal_portrait from './assets/crystal_character/crystal_mauler.png'
 
+
+import Eclipsor from './Eclipsor'
 import eclipsor_idle from './assets/Eclipsor/eclipsor_idle.png'
 import eclipsor_walk from './assets/Eclipsor/eclipsor_walk.png'
 import eclipsor_fly from './assets/Eclipsor/eclipsor_fly.png'
 import eclipsor_atk1 from './assets/Eclipsor/eclipsor_atk1.png'
+
 
 
 
@@ -65,7 +68,7 @@ export default class Level1 extends Phaser.Scene {
     nextLine = 0
 
 
-
+    heHasArrived = false
 
 
 
@@ -188,18 +191,18 @@ export default class Level1 extends Phaser.Scene {
 
 
 
-        const snowflakes = this.add.particles(160, 10, 'snowflake',
-            {
+        // const snowflakes = this.add.particles(160, 10, 'snowflake',
+        //     {
 
-                color: [0xffffff],
-                colorEase: 'quad.out',
-                lifespan: 6000,
-                angle: { min: -90, max: 180 },
-                scale: { start: 0.1, end: 0.1, ease: 'sine.out' },
-                speed: 50,
-                advance: 2000,
-                blendMode: 'ADD'
-            });
+        //         color: [0xffffff],
+        //         colorEase: 'quad.out',
+        //         lifespan: 6000,
+        //         angle: { min: -90, max: 180 },
+        //         scale: { start: 0.1, end: 0.1, ease: 'sine.out' },
+        //         speed: 50,
+        //         advance: 2000,
+        //         blendMode: 'ADD'
+        //     });
 
 
 
@@ -373,29 +376,30 @@ export default class Level1 extends Phaser.Scene {
 
 
             this.dialogueTextArr = [
-                "Ahh, Finally Awake. You took your sweet time aint ya",
-                "How... How is this possible, I died!",
-                "Ya sure did, one hundred years ago",
-                "Do you care to explain, what in the elemental high supreme is going on!",
-                "The elemental High Supreme turned out to be fabricated haha",
-                "Is really now the time to joke around, explain to me why I am alive and here!",
-                "I apologize Master Zenith... The world is in dissarray, the Elemental Families are at war with one another",
+                "Jorgen: Ahh, Finally Awake. You took your sweet time aint ya",
+                "Master Zenith: How... How is this possible, I died!",
+                "Jorgen: Ya sure did, one hundred years ago",
+                "Master Zenith: Do you care to explain, what in the elemental high supreme is going on!",
+                "Jorgen: The elemental High Supreme turned out to be fabricated haha",
+                "Master Zenith: Is really now the time to joke around, explain to me why I am alive and here!",
+                "Jorgen: I apologize Master Zenith... The world is in dissarray, the Elemental Families are at war with one another",
                 "Ok and what exactly does this have to do with me! I'm supposed to be dead!",
-                "Master Zenith, you are the hero of legend, the master of elemental warfare, you are the last master to manipulate all the elements",
+                "Jorgen: Master Zenith, you are the hero of legend, the master of elemental warfare, you are the last master to manipulate all the elements",
                 "Anyone can do that!",
-                "Not anymore....",
+                "Jorgen: Not anymore....",
                 "Explain!",
-                "I am the leader of the Crystal Family, I am the last of my kind that can manipulate crystals",
-                "All the other leaders are the last of their kind, not even their children have the ability to manipulate Elements.",
-                "One Hundred years ago, a curse was brought upon all the families. Us elemental wielders are the last of our kind",
-                "The night you fended off over 1000 Darkness bringers and died, that night the Elemental Crown was taken from the Elemental Supremes grave and destroyed",
+                "Jorgen: I am the leader of the Crystal Family, I am the last of my kind that can manipulate crystals",
+                "Jorgen: All the other leaders are the last of their kind, not even their children have the ability to manipulate Elements.",
+                "Jorgen: One Hundred years ago, a curse was brought upon all the families. Us elemental wielders are the last of our kind",
+                "Jorgen: The night you fended off over 1000 Darkness bringers and died, that night the Elemental Crown was taken from the Elemental Supremes grave and destroyed",
                 "I failed the world, one hundred years ago. You should have not brought me back to life!",
-                "Master, it took us years to find a shard of the Elemental Crown... All to bring you back",
-                "I left the crystal family ages ago on a journey to bring you back.. We need your help",
-                "The very same being that killed you one hundred years ago, is back.. Eclipsor is back! ",
-                "I believe that together we can stop him...",
-                "He has possesed all the leaders of the Elemental Families and started a war.",
-                "Only you have the spiritual power to free them!"
+                "Jorgen: Master, it took us years to find a shard of the Elemental Crown... All to bring you back",
+                "Jorgen: I left the crystal family ages ago on a journey to bring you back.. We need your help",
+                "Jorgen: The very same being that killed you one hundred years ago, is back.. Eclipsor is back! ",
+                "Jorgen: I believe that together we can stop him...",
+                "Jorgen: He has possesed all the leaders of the Elemental Families and started a war.",
+                "Jorgen: Only you have the spiritual power to free them!",
+                "Eclipso: You pathetic little fuck, I told you if you disobeyed I would rip you apart!"
 
 
 
@@ -457,23 +461,34 @@ export default class Level1 extends Phaser.Scene {
             });
 
 
-            if (this.nextLine > 22) {
+            if (this.nextLine > 22 && this.heHasArrived === false) {
                 console.log("enter eclipso")
-                const flashRectangle = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xffffff);
-                flashRectangle.setAlpha(0); // Set initial alpha to transparent
+                this.flashRectangle = this.add.rectangle(0, 0, 1920, 1080, 0xffffff);
+
+                this.heHasArrived = true
+                if (this.heHasArrived === true) {
+                    this.time.delayedCall(1000, () => {
+                        console.log('he has arrived')
+                        this.flashRectangle.destroy()
+                        this.eclipsor = new Eclipsor(this, 250, 100)
+                        this.eclipsor.anims.play('eclipsor_idle', true)
+                        this.physics.add.collider(this.eclipsor, this.ground);
+
+                        if (this.heHasArrived && this.nextLine === 23) {
+                            this.eclipsor.setVelocityX(10)
+                            this.eclipsor.play('eclipsor_walk', true)
+                        }
+
+                    })
+
+
+                }
+
+
+                // Set initial alpha to transparent
 
                 // Tween the alpha property to make it flash
-                this.tweens.add({
-                    targets: flashRectangle,
-                    alpha: 1, // Target alpha value (fully opaque)
-                    duration: 200, // Duration of the tween in milliseconds
-                    ease: 'Linear',
-                    yoyo: true, // Makes the tween reverse back to the initial state
-                    repeat: 0, // Number of times to repeat (0 means don't repeat)
-                    onComplete: function () {
-                        flashRectangle.setAlpha(0); // Reset alpha to transparent after the tween completes
-                    }
-                });
+
             }
 
 
