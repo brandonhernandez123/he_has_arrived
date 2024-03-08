@@ -28,13 +28,14 @@ import crystal_character_hit from '../src/assets/crystal_character/crystal_char_
 import crystal_character_death from '../src/assets/crystal_character/crystal_char_death.png'
 import crystal_character_walk from './assets/crystal_character/crystal_warrior_walk.png'
 import crystal_portrait from './assets/crystal_character/crystal_mauler.png'
+import crystal_warrior_atk from './assets/crystal_character/crystal_warrior_atk.png'
 
 
 import Eclipsor from './Eclipsor'
 import eclipsor_idle from './assets/Eclipsor/eclipsor_idle.png'
-import eclipsor_walk from './assets/Eclipsor/eclipsor_walk.png'
 import eclipsor_fly from './assets/Eclipsor/eclipsor_fly.png'
-import eclipsor_atk1 from './assets/Eclipsor/eclipsor_atk1.png'
+import eclipseAtk from './assets/Eclipsor/eclipsorAtk.png'
+import eclipseWalk from './assets/Eclipsor/eclipseWalk.png'
 
 
 
@@ -89,13 +90,16 @@ export default class Level1 extends Phaser.Scene {
         this.load.spritesheet('crystal_char_hit', crystal_character_hit, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('crystal_char_death', crystal_character_death, { frameWidth: 288, frameHeight: 128 })
         this.load.spritesheet('crystal_char_walk', crystal_character_walk, { frameWidth: 288, frameHeight: 128 })
+        this.load.spritesheet('crystal_warrior_atk', crystal_warrior_atk, { frameWidth: 288, frameHeight: 128 })
+
 
 
 
         this.load.spritesheet('eclipsor_idle', eclipsor_idle, { frameWidth: 192, frameHeight: 112 })
-        this.load.spritesheet('eclipsor_walk', eclipsor_walk, { frameWidth: 192, frameHeight: 122 })
         this.load.spritesheet('eclipsor_fly', eclipsor_fly, { frameWidth: 192, frameHeight: 112 })
-        this.load.spritesheet('eclipsor_atk1', eclipsor_atk1, { frameWidth: 192, frameHeight: 112 })
+        this.load.spritesheet('eclipseWalk', eclipseWalk, { frameWidth: 192, frameHeight: 112 })
+        this.load.spritesheet('eclipseAtk', eclipseAtk, { frameWidth: 192, frameHeight: 112 })
+
 
 
 
@@ -356,6 +360,15 @@ export default class Level1 extends Phaser.Scene {
     }
 
     Dialogue() {
+
+
+        const destroyBoxAndButton = () => {
+            this.dialogueBox.destroy();
+            this.nextButton.destroy();
+        };
+
+
+
         if (this.dialogueActive === true) {
 
 
@@ -372,6 +385,7 @@ export default class Level1 extends Phaser.Scene {
 
 
             this.dialogueBox = this.add.rectangle(240, 100, 400, 85, 0x000000)
+
 
 
 
@@ -404,6 +418,11 @@ export default class Level1 extends Phaser.Scene {
 
 
             ];
+
+            if (this.nextLine >= this.dialogueTextArr.length) {
+                this.destroyBoxAndButton()
+            }
+
 
 
             this.displayPortrait = [
@@ -474,15 +493,52 @@ export default class Level1 extends Phaser.Scene {
                         this.eclipsor.anims.play('eclipsor_idle', true)
                         this.physics.add.collider(this.eclipsor, this.ground);
 
-                        if (this.heHasArrived && this.nextLine === 23) {
+                        if (this.heHasArrived && this.nextLine >= 23) {
                             this.eclipsor.setVelocityX(10)
-                            this.eclipsor.play('eclipsor_walk', true)
+                            this.eclipsor.anims.play('eclipseWalk', true)
+
+                            this.physics.add.collider(this.eclipsor, this.crystal_warrior, () => {
+                                this.eclipsor.setVelocityX(0)
+                                this.crystal_warrior.play('crystal_warrior_atk', true)
+                                this.eclipsor.anims.playAfterDelay('eclipseAtk', 2000)
+
+                                this.eclipsor.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (animation) => {
+                                    if (animation.key === 'eclipseAtk') {
+                                        this.crystal_warrior.damageTaken(100)
+                                        // this.crystal_warrior.isDead = true
+                                        // this.crystal_warrior.currentState = 'dead'
+                                        this.crystal_warrior.play('crystal_char_death', true)
+                                        this.time.delayedCall(2000, () => {
+                                            this.crystal_warrior.destroy()
+                                            this.eclipsor.anims.play('eclipsor_fly', true)
+                                            this.eclipsor.setVelocityY(-250)
+                                            this.eclipsor.setVelocityX(250)
+
+                                            this.time.delayedCall(2000, () => {
+                                                this.eclipsor.destroy()
+                                                this.dialogueActive = false
+                                                destroyBoxAndButton()
+                                            })
+
+                                        })
+
+
+
+                                        // this.crystal_warrior.destroy()
+
+                                    }
+
+                                })
+
+                            })
                         }
 
                     })
 
 
                 }
+
+
 
 
                 // Set initial alpha to transparent
@@ -492,7 +548,14 @@ export default class Level1 extends Phaser.Scene {
             }
 
 
+
+
+
+
         }
+
+
+
 
 
     }

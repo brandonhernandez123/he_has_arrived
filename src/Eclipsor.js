@@ -43,8 +43,8 @@ export default class Eclipsor extends Phaser.Physics.Arcade.Sprite {
         })
 
         this.scene.anims.create({
-            key: 'eclipsor_walk',
-            frames: this.scene.anims.generateFrameNumbers('eclipsor_walk', { start: 0, end: 11 }),
+            key: 'eclipseWalk',
+            frames: this.scene.anims.generateFrameNumbers('eclipseWalk', { start: 0, end: 11 }),
             frameRate: 8,
             repeat: -1
         })
@@ -57,8 +57,8 @@ export default class Eclipsor extends Phaser.Physics.Arcade.Sprite {
         })
 
         this.scene.anims.create({
-            key: 'eclipsor_atk1',
-            frames: this.scene.anims.generateFrameNumbers('eclipsor_atk1', { start: 0, end: 6 }),
+            key: 'eclipseAtk',
+            frames: this.scene.anims.generateFrameNumbers('eclipseAtk', { start: 0, end: 6 }),
             frameRate: 8,
             repeat: 0
         })

@@ -18,9 +18,9 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
         this.timeToFlip = false
         this.hit = false
         this.inDialogue = false;
+        this.isDead = false
 
-
-
+        // this.EclipsorCutscene()
         this.crystalWarriorHealth = 100
         this.currentState = 'idle'
 
@@ -59,19 +59,17 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
     }
 
     charDead() {
-        this.anims.play('crystal_char_death', true)
-        this.currentState = 'dead'
+        if (this.isDead) {
+            this.anims.play('crystal_char_death', true)
+
+        }
+
     }
 
 
     update() {
-        this.InCutscene()
-
-        if (this.inDialogue === false) {
-            this.Patrolling()
-            this.TimeToFlip()
-        }
-
+        // this.InCutscene()
+        this.charDead()
 
 
         if (this.crystalWarriorHealth > 0) {
@@ -129,6 +127,12 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
             frameRate: 8,
             repeat: 0
         });
+        this.scene.anims.create({
+            key: 'crystal_warrior_atk',
+            frames: this.scene.anims.generateFrameNumbers('crystal_warrior_atk', { start: 0, end: 16 }),
+            frameRate: 8,
+            repeat: 0
+        });
     }
 
 
@@ -172,14 +176,21 @@ export default class Crystal_Warrior extends Phaser.Physics.Arcade.Sprite {
 
     }
 
-    InCutscene() {
-        if (this.inDialogue === true) {
-            this.setVelocityX(0)
-            this.anims.play('crystal_char_idle', true)
+    // InCutscene() {
+    //     if (this.inDialogue === true) {
+    //         this.setVelocityX(0)
+    //         this.anims.play('crystal_char_idle', true)
 
 
 
-        }
+    //     }
 
-    }
 }
+// eclipsorScene = false
+
+
+// EclipsorCutscene() {
+//     if (this.eclipsorScene === true) {
+//         this.anims.play('crystal_warrior_atk', true)
+//     }
+// }
