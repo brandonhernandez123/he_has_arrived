@@ -120,7 +120,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-            this.scene.time.delayedCall(3000, () => {
+            this.scene.time.delayedCall(900, () => {
                 boulder.destroy
                 this.isBoulderSpawning = false
             })
@@ -267,7 +267,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
                 if (this.specialWaitTime === true) {
-                    this.scene.time.delayedCall(5000, () => {
+                    this.scene.time.delayedCall(6000, () => {
                         this.specialWaitTime = false
                         console.log('special : timer expired switching to true')
                     })

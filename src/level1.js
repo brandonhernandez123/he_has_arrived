@@ -37,7 +37,7 @@ import eclipsor_fly from './assets/Eclipsor/eclipsor_fly.png'
 import eclipseAtk from './assets/Eclipsor/eclipsorAtk.png'
 import eclipseWalk from './assets/Eclipsor/eclipseWalk.png'
 
-
+import goblin_idle from './assets/Goblin/Idle.png'
 
 
 
@@ -48,6 +48,7 @@ import bg0 from '../src/assets/level1_bg/Battleground1.png'
 
 import platform from '../src/assets/level1_bg/platform.png'
 import snowflake from './assets/snowflake.png'
+import Goblin from "./Goblin";
 
 
 
@@ -70,6 +71,7 @@ export default class Level1 extends Phaser.Scene {
 
 
     heHasArrived = false
+    cutsceneOver = false
 
 
 
@@ -99,6 +101,10 @@ export default class Level1 extends Phaser.Scene {
         this.load.spritesheet('eclipsor_fly', eclipsor_fly, { frameWidth: 192, frameHeight: 112 })
         this.load.spritesheet('eclipseWalk', eclipseWalk, { frameWidth: 192, frameHeight: 112 })
         this.load.spritesheet('eclipseAtk', eclipseAtk, { frameWidth: 192, frameHeight: 112 })
+
+
+
+        this.load.spritesheet('goblin_idle', goblin_idle, { frameWidth: 150, frameHeight: 150 })
 
 
 
@@ -188,7 +194,8 @@ export default class Level1 extends Phaser.Scene {
 
         this.crystal_warrior.flipX = true
 
-        this.dialogueActive = true
+        this.dialogueActive = false
+        this.cutsceneOver = true
 
 
         this.Collisions()
@@ -228,6 +235,9 @@ export default class Level1 extends Phaser.Scene {
 
         this.player.update()
         this.crystal_warrior.update()
+        this.SpawnGoblins()
+
+
 
 
 
@@ -361,11 +371,37 @@ export default class Level1 extends Phaser.Scene {
 
     Dialogue() {
 
+        this.dialogueTextArr = [
+            "Jorgen: Ahh, Finally Awake. You took your sweet time aint ya",
+            "Master Zenith: How... How is this possible, I died!",
+            "Jorgen: Ya sure did, one hundred years ago",
+            "Master Zenith: Do you care to explain, what in the elemental high supreme is going on!",
+            "Jorgen: The elemental High Supreme turned out to be fabricated haha",
+            "Master Zenith: Is really now the time to joke around, explain to me why I am alive and here!",
+            "Jorgen: I apologize Master Zenith... The world is in dissarray, the Elemental Families are at war with one another",
+            "Ok and what exactly does this have to do with me! I'm supposed to be dead!",
+            "Jorgen: Master Zenith, you are the hero of legend, the master of elemental warfare, you are the last master to manipulate all the elements",
+            "Anyone can do that!",
+            "Jorgen: Not anymore....",
+            "Explain!",
+            "Jorgen: I am the leader of the Crystal Family, I am the last of my kind that can manipulate crystals",
+            "Jorgen: All the other leaders are the last of their kind, not even their children have the ability to manipulate Elements.",
+            "Jorgen: One Hundred years ago, a curse was brought upon all the families. Us elemental wielders are the last of our kind",
+            "Jorgen: The night you fended off over 1000 Darkness bringers and died, that night the Elemental Crown was taken from the Elemental Supremes grave and destroyed",
+            "I failed the world, one hundred years ago. You should have not brought me back to life!",
+            "Jorgen: Master, it took us years to find a shard of the Elemental Crown... All to bring you back",
+            "Jorgen: I left the crystal family ages ago on a journey to bring you back.. We need your help",
+            "Jorgen: The very same being that killed you one hundred years ago, is back.. Eclipsor is back! ",
+            "Jorgen: I believe that together we can stop him...",
+            "Jorgen: He has possesed all the leaders of the Elemental Families and started a war.",
+            "Jorgen: Only you have the spiritual power to free them!",
+            "Eclipso: You pathetic little fuck, I told you if you disobeyed I would rip you apart!"
 
-        const destroyBoxAndButton = () => {
-            this.dialogueBox.destroy();
-            this.nextButton.destroy();
-        };
+
+
+        ];
+
+
 
 
 
@@ -378,50 +414,21 @@ export default class Level1 extends Phaser.Scene {
 
             const increment = () => {
                 this.nextLine++
-                console.log(this.nextLine)
             }
+
+
 
 
 
 
             this.dialogueBox = this.add.rectangle(240, 100, 400, 85, 0x000000)
+            this.dialogueBox.setAlpha(0.5)
 
 
 
 
-            this.dialogueTextArr = [
-                "Jorgen: Ahh, Finally Awake. You took your sweet time aint ya",
-                "Master Zenith: How... How is this possible, I died!",
-                "Jorgen: Ya sure did, one hundred years ago",
-                "Master Zenith: Do you care to explain, what in the elemental high supreme is going on!",
-                "Jorgen: The elemental High Supreme turned out to be fabricated haha",
-                "Master Zenith: Is really now the time to joke around, explain to me why I am alive and here!",
-                "Jorgen: I apologize Master Zenith... The world is in dissarray, the Elemental Families are at war with one another",
-                "Ok and what exactly does this have to do with me! I'm supposed to be dead!",
-                "Jorgen: Master Zenith, you are the hero of legend, the master of elemental warfare, you are the last master to manipulate all the elements",
-                "Anyone can do that!",
-                "Jorgen: Not anymore....",
-                "Explain!",
-                "Jorgen: I am the leader of the Crystal Family, I am the last of my kind that can manipulate crystals",
-                "Jorgen: All the other leaders are the last of their kind, not even their children have the ability to manipulate Elements.",
-                "Jorgen: One Hundred years ago, a curse was brought upon all the families. Us elemental wielders are the last of our kind",
-                "Jorgen: The night you fended off over 1000 Darkness bringers and died, that night the Elemental Crown was taken from the Elemental Supremes grave and destroyed",
-                "I failed the world, one hundred years ago. You should have not brought me back to life!",
-                "Jorgen: Master, it took us years to find a shard of the Elemental Crown... All to bring you back",
-                "Jorgen: I left the crystal family ages ago on a journey to bring you back.. We need your help",
-                "Jorgen: The very same being that killed you one hundred years ago, is back.. Eclipsor is back! ",
-                "Jorgen: I believe that together we can stop him...",
-                "Jorgen: He has possesed all the leaders of the Elemental Families and started a war.",
-                "Jorgen: Only you have the spiritual power to free them!",
-                "Eclipso: You pathetic little fuck, I told you if you disobeyed I would rip you apart!"
 
 
-
-            ];
-
-            if (this.nextLine >= this.dialogueTextArr.length) {
-                this.destroyBoxAndButton()
-            }
 
 
 
@@ -452,7 +459,7 @@ export default class Level1 extends Phaser.Scene {
 
             ]
 
-            this.add.image(80, 90, this.displayPortrait[this.nextLine])
+            this.portrait = this.add.image(80, 90, this.displayPortrait[this.nextLine])
 
 
 
@@ -478,81 +485,18 @@ export default class Level1 extends Phaser.Scene {
             this.nextButton.on('pointerdown', () => {
                 increment()
             });
-
-
-            if (this.nextLine > 22 && this.heHasArrived === false) {
-                console.log("enter eclipso")
-                this.flashRectangle = this.add.rectangle(0, 0, 1920, 1080, 0xffffff);
-
-                this.heHasArrived = true
-                if (this.heHasArrived === true) {
-                    this.time.delayedCall(1000, () => {
-                        console.log('he has arrived')
-                        this.flashRectangle.destroy()
-                        this.eclipsor = new Eclipsor(this, 250, 100)
-                        this.eclipsor.anims.play('eclipsor_idle', true)
-                        this.physics.add.collider(this.eclipsor, this.ground);
-
-                        if (this.heHasArrived && this.nextLine >= 23) {
-                            this.eclipsor.setVelocityX(10)
-                            this.eclipsor.anims.play('eclipseWalk', true)
-
-                            this.physics.add.collider(this.eclipsor, this.crystal_warrior, () => {
-                                this.eclipsor.setVelocityX(0)
-                                this.crystal_warrior.play('crystal_warrior_atk', true)
-                                this.eclipsor.anims.playAfterDelay('eclipseAtk', 2000)
-
-                                this.eclipsor.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (animation) => {
-                                    if (animation.key === 'eclipseAtk') {
-                                        this.crystal_warrior.damageTaken(100)
-                                        // this.crystal_warrior.isDead = true
-                                        // this.crystal_warrior.currentState = 'dead'
-                                        this.crystal_warrior.play('crystal_char_death', true)
-                                        this.time.delayedCall(2000, () => {
-                                            this.crystal_warrior.destroy()
-                                            this.eclipsor.anims.play('eclipsor_fly', true)
-                                            this.eclipsor.setVelocityY(-250)
-                                            this.eclipsor.setVelocityX(250)
-
-                                            this.time.delayedCall(2000, () => {
-                                                this.eclipsor.destroy()
-                                                this.dialogueActive = false
-                                                destroyBoxAndButton()
-                                            })
-
-                                        })
-
-
-
-                                        // this.crystal_warrior.destroy()
-
-                                    }
-
-                                })
-
-                            })
-                        }
-
-                    })
-
-
-                }
-
-
-
-
-                // Set initial alpha to transparent
-
-                // Tween the alpha property to make it flash
-
-            }
-
-
-
-
-
-
         }
+
+        // this.Tutorial()
+
+
+        this.HeHasArrived()
+
+
+
+
+
+
 
 
 
@@ -561,8 +505,140 @@ export default class Level1 extends Phaser.Scene {
     }
 
 
+    // Tutorial = () => {
 
 
+
+    //     this.tutorialArray = [
+    //         "Press A to move Left | Press D to move Right ",
+    //         "Press J to create a launch a boulder ",
+    //         "Press K to kick a fireball ",
+    //         "Press L to use your special abilty, you must wait "
+    //     ]
+
+
+
+
+    //     if (this.cutsceneOver === true) {
+
+    //         this.player.inDialogue = false
+    //         this.dialogueText.setText(this.tutorialArray[0])
+    //         this.SpawnGoblins()
+    //         // const displayNextLine = () => {
+    //         //     if (this.nextLine < this.tutorialArray.length) {
+    //         //         this.nextLine++
+
+    //         //         this.time.delayedCall(3000, displayNextLine, [], this)
+    //         //     }
+    //         // }
+
+
+    //     }
+
+    // };
+
+    HeHasArrived() {
+        if (this.nextLine > 22 && this.heHasArrived === false) {
+            console.log("enter eclipso")
+            this.flashRectangle = this.add.rectangle(0, 0, 1920, 1080, 0xffffff);
+
+            this.heHasArrived = true
+            if (this.heHasArrived === true) {
+                this.time.delayedCall(1000, () => {
+                    console.log('he has arrived')
+                    this.flashRectangle.destroy()
+                    this.eclipsor = new Eclipsor(this, 250, 100)
+                    this.eclipsor.anims.play('eclipsor_idle', true)
+                    this.physics.add.collider(this.eclipsor, this.ground);
+
+                    if (this.heHasArrived && this.nextLine >= 23) {
+                        this.eclipsor.setVelocityX(10)
+                        this.eclipsor.anims.play('eclipseWalk', true)
+
+                        this.physics.add.collider(this.eclipsor, this.crystal_warrior, () => {
+                            this.eclipsor.setVelocityX(0)
+                            this.crystal_warrior.play('crystal_warrior_atk', true)
+                            this.eclipsor.anims.playAfterDelay('eclipseAtk', 2000)
+
+                            this.eclipsor.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (animation) => {
+                                if (animation.key === 'eclipseAtk') {
+                                    this.crystal_warrior.damageTaken(100)
+                                    // this.crystal_warrior.isDead = true
+                                    // this.crystal_warrior.currentState = 'dead'
+                                    this.crystal_warrior.play('crystal_char_death', true)
+                                    this.time.delayedCall(2000, () => {
+                                        this.crystal_warrior.destroy()
+                                        this.eclipsor.anims.play('eclipsor_fly', true)
+                                        this.eclipsor.setVelocityY(-250)
+                                        this.eclipsor.setVelocityX(250)
+                                        this.cutsceneOver = true
+
+                                        this.time.delayedCall(2000, () => {
+                                            this.eclipsor.destroy()
+                                            this.dialogueActive = false
+
+                                        })
+
+                                    })
+
+
+
+                                    // this.crystal_warrior.destroy()
+
+                                }
+
+                            })
+
+                        })
+                    }
+
+                })
+
+
+            }
+
+
+
+
+            // Set initial alpha to transparent
+
+            // Tween the alpha property to make it flash
+
+        }
+    }
+
+
+
+
+    SpawnGoblins() {
+        this.goblinGroup = this.add.group()
+        // Initialize goblinCount and isGoblinSpawning if not done elsewhere
+        if (this.goblinCount === undefined) {
+            this.goblinCount = 0;
+        }
+
+        if (this.isGoblinSpawning !== true && this.goblinCount < 10) {
+            this.isGoblinSpawning = true;
+
+            // Set a delay of 3000 milliseconds (3 seconds)
+            this.time.delayedCall(3000, () => {
+                // Spawn a goblin
+                this.goblin = new Goblin(this, 300, 100);
+                this.goblin.update()
+                this.goblinGroup.add(this.goblin)
+                this.physics.add.collider(this.goblin, this.ground);
+                // this.goblin.FollowPlayer(this.player)
+
+                // Increment goblinCount
+                this.goblinCount++;
+
+                // Set isGoblinSpawning to false after another 1000 milliseconds (1 second)
+                this.time.delayedCall(1000, () => {
+                    this.isGoblinSpawning = false;
+                });
+            }, this);
+        }
+    }
 
 
 
