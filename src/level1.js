@@ -617,16 +617,20 @@ export default class Level1 extends Phaser.Scene {
             this.goblinCount = 0;
         }
 
-        if (this.isGoblinSpawning !== true && this.goblinCount < 10) {
+        if (this.isGoblinSpawning !== true && this.goblinCount < 1) {
             this.isGoblinSpawning = true;
 
             // Set a delay of 3000 milliseconds (3 seconds)
-            this.time.delayedCall(3000, () => {
+            this.time.delayedCall(100, () => {
                 // Spawn a goblin
                 this.goblin = new Goblin(this, 300, 100);
                 this.goblin.update()
                 this.goblinGroup.add(this.goblin)
                 this.physics.add.collider(this.goblin, this.ground);
+                if (this.goblin.health < 50) {
+                    console.log('available to possess')
+                    this.player.PossessEnemy(this.goblin)
+                }
                 // this.goblin.FollowPlayer(this.player)
 
                 // Increment goblinCount

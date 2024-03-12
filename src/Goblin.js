@@ -10,10 +10,11 @@ export default class Goblin extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
         this.setSize(30, 60);
         this.setOffset(70, 70)
-        this.health = 100
+        this.health = 49
         this.atkStat = 30
         this.defStat = 22
         this.xp = 45
+        this.possessed = false
 
         this.CreateAnims()
 
@@ -21,11 +22,18 @@ export default class Goblin extends Phaser.Physics.Arcade.Sprite {
 
 
     update() {
+
+        console.log(this.possessed)
         if (this.health > 0) {
             this.anims.play('goblin_idle', true)
             this.FollowPlayer(this.scene.player)
 
+
+        } else if (this.health > 0 && this.possessed) {
+            this.EnemyPossessed()
         }
+
+
     }
 
 
@@ -49,6 +57,25 @@ export default class Goblin extends Phaser.Physics.Arcade.Sprite {
         } else {
             console.log('Chase');
             this.scene.physics.moveToObject(this, player, 100); // Adjust speed as needed
+        }
+    }
+
+
+
+    EnemyPossessed() {
+        if (this.possessed === true && this.health <= 50) {
+            this.cursors = scene.input.keyboard.createCursorKeys()
+            this.right = this.scene.input.keyboard.addKey("D")
+            this.left = this.scene.input.keyboard.addKey("A")
+
+
+            if (this.right.isDown) {
+                this.setVelocityX(100)
+            } else if (this.left.isDown) {
+                this.setVelocityX(-100)
+            } else {
+                this.setVelocityX(0)
+            }
         }
     }
 

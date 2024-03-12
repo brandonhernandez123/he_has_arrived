@@ -14,6 +14,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setSize(15, 40);
         this.setOffset(135, 80)
         this.inDialogue = false;
+        this.possessing = false
 
         this.currentState
         this.gameState = {
@@ -24,7 +25,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             roll: scene.input.keyboard.addKey('SHIFT'),
             right: scene.input.keyboard.addKey('D'),
             left: scene.input.keyboard.addKey('A'),
-            jump: scene.input.keyboard.addKey("SPACE")
+            jump: scene.input.keyboard.addKey("SPACE"),
+            possess: scene.input.keyboard.addKey('I')
 
         };
 
@@ -57,10 +59,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.InCutscene()
 
 
-        if (this.inDialogue === false) {
+        if (this.inDialogue === false || this.possessing === false) {
             this.PlayerMovement()
             this.PlayerAttacks()
         }
+
 
 
 
@@ -401,7 +404,19 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-
+    PossessEnemy(enemy) {
+        if (!this.possessing && enemy.health <= 50 && enemy.health > 0) {
+            console.log('you can possess enemy')
+            if (Phaser.Input.Keyboard.JustDown(this.gameState.possess)) {
+                this.possessing = true
+                enemy.possessed = true
+                console.log(this.possessing, 'working?')
+                this.scene.time.delayedCall(15000, () => {
+                    this.possessing = false
+                }, this)
+            }
+        }
+    }
 
 
 
