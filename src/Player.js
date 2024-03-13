@@ -13,7 +13,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
         this.setSize(15, 40);
         this.setOffset(135, 80)
-
+        this.inDialogue = false;
+        this.possessing = false
 
         this.currentState
         this.gameState = {
@@ -24,7 +25,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             roll: scene.input.keyboard.addKey('SHIFT'),
             right: scene.input.keyboard.addKey('D'),
             left: scene.input.keyboard.addKey('A'),
-            jump: scene.input.keyboard.addKey("SPACE")
+            jump: scene.input.keyboard.addKey("SPACE"),
+            possess: scene.input.keyboard.addKey('I')
 
         };
 
@@ -54,8 +56,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     update() {
 
-        this.PlayerMovement()
-        this.PlayerAttacks()
+        this.InCutscene()
+
+
+        if (this.inDialogue === false || this.possessing === false) {
+            this.PlayerMovement()
+            this.PlayerAttacks()
+        }
+
+
 
 
 
@@ -114,10 +123,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-            this.scene.time.delayedCall(3000, () => {
+            this.scene.time.delayedCall(900, () => {
                 boulder.destroy
                 this.isBoulderSpawning = false
-            })}
+            })
+        }
 
 
 
@@ -260,7 +270,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
                 if (this.specialWaitTime === true) {
-                    this.scene.time.delayedCall(5000, () => {
+                    this.scene.time.delayedCall(6000, () => {
                         this.specialWaitTime = false
                         console.log('special : timer expired switching to true')
                     })
@@ -295,22 +305,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     PlayerMovement() {
 
-        if(this.gameState.right.isDown && this.body.touching.down){
+        if (this.gameState.right.isDown && this.body.touching.down) {
             this.setVelocityX(150)
             this.anims.play('player_run_anim', true)
             this.flipX = false
-        } else if(this.gameState.left.isDown && this.body.touching.down){
+        } else if (this.gameState.left.isDown && this.body.touching.down) {
             this.setVelocityX(-150)
             this.anims.play('player_run_anim', true)
             this.flipX = true
-        } else if(Phaser.Input.Keyboard.JustDown(this.gameState.roll) && this.rollWaitTime === false && this.body.touching.down){
+        } else if (Phaser.Input.Keyboard.JustDown(this.gameState.roll) && this.rollWaitTime === false && this.body.touching.down) {
             const facingDir = this.flipX ? -2000 : 2000
             this.setVelocityX(facingDir)
             this.anims.play('player_roll', true)
-            
-        }   
-        
-        
+
+        }
+
+
         else {
             this.setVelocityX(0)
             this.anims.playAfterDelay('player_idle_anim', 25)
@@ -319,7 +329,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-        if(this.body.velocity.y < 0){
+        if (this.body.velocity.y < 0) {
             this.anims.play('player_jump')
         }
 
@@ -373,6 +383,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         }
 
+
+    }
+
+    InCutscene() {
+        if (this.inDialogue === true) {
+            this.setVelocityX(0)
+            this.anims.play('player_idle_anim', true)
+        }
+
     }
 
 
@@ -385,8 +404,19 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-
-
+    PossessEnemy(enemy) {
+        if (!this.possessing && enemy.health <= 50 && enemy.health > 0) {
+            console.log('you can possess enemy')
+            if (Phaser.Input.Keyboard.JustDown(this.gameState.possess)) {
+                this.possessing = true
+                enemy.possessed = true
+                console.log(this.possessing, 'working?')
+                this.scene.time.delayedCall(15000, () => {
+                    this.possessing = false
+                }, this)
+            }
+        }
+    }
 
 
 
