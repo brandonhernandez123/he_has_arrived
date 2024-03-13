@@ -313,7 +313,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         
         else {
             this.setVelocityX(0)
-            this.anims.playAfterDelay('player_idle_anim', 18)
+            this.anims.playAfterDelay('player_idle_anim', 25)
         }
 
 
