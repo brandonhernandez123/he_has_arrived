@@ -26,7 +26,7 @@ export default class Goblin extends Phaser.Physics.Arcade.Sprite {
         console.log(this.possessed)
         if (this.health > 0) {
             this.anims.play('goblin_idle', true)
-            this.FollowPlayer(this.scene.player)
+            // this.FollowPlayer(this.scene.player)
 
 
         } else if (this.health > 0 && this.possessed) {
@@ -44,21 +44,40 @@ export default class Goblin extends Phaser.Physics.Arcade.Sprite {
             frameRate: 8,
             repeat: -1
         })
+
+        this.scene.anims.create({
+            key: 'goblin_hit',
+            frames: this.scene.anims.generateFrameNumbers('goblin_hit', { start: 0, end: 3 }),
+            frameRate: 8,
+            repeat: 0
+        })
+
+        this.scene.anims.create({
+            key: 'goblin_Death',
+            frames: this.scene.anims.generateFrameNumbers('goblin_Death', { start: 0, end: 3 }),
+            frameRate: 8,
+            repeat: 0
+        })
     }
 
 
-    FollowPlayer(player) {
-        const distance = Phaser.Math.Distance.Between(this.x, this.y, player.x, player.y);
+    // FollowPlayer(player) {
+    //     const distance = Phaser.Math.Distance.Between(this.x, this.y, player.x, player.y);
 
-        if (distance < 50) {
-            console.log('Attack!');
-            this.setVelocity(0, 0); // Stop moving
-            // Add your attack logic here
-        } else {
-            console.log('Chase');
-            this.scene.physics.moveToObject(this, player, 100); // Adjust speed as needed
-        }
-    }
+    //    console.log(distance)
+
+    //    if(this.x > player.x + 15){
+    //     this.flipX = true
+    //     this.setVelocityX(-50)
+    //    } else if(this.x < player.x) {
+    //     this.flipX = false
+    //     this.setVelocityX(50)
+    //    }
+
+
+
+
+    // }
 
 
 
@@ -77,6 +96,15 @@ export default class Goblin extends Phaser.Physics.Arcade.Sprite {
                 this.setVelocityX(0)
             }
         }
+    }
+
+
+    Dmg(damage){
+    
+        let subHealth =  this.defStat - damage
+        console.log('damage minus defsat = ', subHealth)
+        this.health -= subHealth
+        console.log(this.health)
     }
 
 }

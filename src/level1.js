@@ -38,6 +38,8 @@ import eclipseAtk from './assets/Eclipsor/eclipsorAtk.png'
 import eclipseWalk from './assets/Eclipsor/eclipseWalk.png'
 
 import goblin_idle from './assets/Goblin/Idle.png'
+import goblin_hit from './assets/Goblin/hit.png'
+import goblin_Death from './assets/Goblin/Death.png'
 
 
 
@@ -105,6 +107,10 @@ export default class Level1 extends Phaser.Scene {
 
 
         this.load.spritesheet('goblin_idle', goblin_idle, { frameWidth: 150, frameHeight: 150 })
+        this.load.spritesheet('goblin_hit', goblin_hit, { frameWidth: 150, frameHeight: 150 })
+        this.load.spritesheet('goblin_Death', goblin_Death, { frameWidth: 150, frameHeight: 150 })
+
+
 
 
 
@@ -539,13 +545,11 @@ export default class Level1 extends Phaser.Scene {
 
     HeHasArrived() {
         if (this.nextLine > 22 && this.heHasArrived === false) {
-            console.log("enter eclipso")
             this.flashRectangle = this.add.rectangle(0, 0, 1920, 1080, 0xffffff);
 
             this.heHasArrived = true
             if (this.heHasArrived === true) {
                 this.time.delayedCall(1000, () => {
-                    console.log('he has arrived')
                     this.flashRectangle.destroy()
                     this.eclipsor = new Eclipsor(this, 250, 100)
                     this.eclipsor.anims.play('eclipsor_idle', true)
@@ -623,14 +627,47 @@ export default class Level1 extends Phaser.Scene {
             // Set a delay of 3000 milliseconds (3 seconds)
             this.time.delayedCall(100, () => {
                 // Spawn a goblin
-                this.goblin = new Goblin(this, 300, 100);
-                this.goblin.update()
-                this.goblinGroup.add(this.goblin)
-                this.physics.add.collider(this.goblin, this.ground);
-                if (this.goblin.health < 50) {
-                    console.log('available to possess')
-                    this.player.PossessEnemy(this.goblin)
-                }
+                const goblin = new Goblin(this, 300, 100);
+                goblin.update()
+                this.goblinGroup.add(goblin)
+                this.physics.add.collider(this.goblinGroup, this.ground);
+                // goblin.FollowPlayer(this.player)
+
+
+                this.EnemyAi(goblin, this.player, 'goblin_walk')
+
+
+                
+                                this.physics.add.collider(this.goblinGroup, this.player.boulderGroup, (goblin, boulder) => {
+                                    goblin.Dmg(1)
+                                    boulder = this.player.boulderGroup.getChildren().at(0)
+                                    boulder.destroy()
+                                    goblin.anims.play('goblin_hit', true)
+                                    goblin.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (animation) => {
+                                        if(animation.key === 'goblin_hit'){
+                                            goblin.anims.play('goblin_idle', true)
+                                        } else if(animation.key === 'goblin_Death'){
+                                            goblin.destroy()
+                                        }
+                                    })
+
+                                    
+
+
+                                    if(goblin.health < 0){
+                                        goblin.anims.play('goblin_Death', true)
+                                    }
+
+                                    
+                                
+                                })
+
+
+
+                // if (this.goblin.health < 50) {
+                //     console.log('available to possess')
+                //     this.player.PossessEnemy(this.goblin)
+                // }
                 // this.goblin.FollowPlayer(this.player)
 
                 // Increment goblinCount
@@ -641,6 +678,16 @@ export default class Level1 extends Phaser.Scene {
                     this.isGoblinSpawning = false;
                 });
             }, this);
+        }
+    }
+
+    EnemyAi(enemy, player, anim_key){
+        if(enemy.x > player.x + 15){
+            enemy.setVelocity(-50)
+            enemy.anims.play(anim_key, true)
+        } else if (enemy.x < player.x - 15){
+            enemy.setVelocityX(50)
+            enemy.anims.play(anim_key, true)
         }
     }
 
