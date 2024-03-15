@@ -76,6 +76,7 @@ export default class Level1 extends Phaser.Scene {
 
 
 
+
     preload() {
         //Player image loader
         this.load.spritesheet('player_idle', player_idle, { frameWidth: 1728 / 6, frameHeight: 128 })
@@ -199,6 +200,7 @@ export default class Level1 extends Phaser.Scene {
 
 
         this.Collisions()
+
 
 
 
@@ -611,27 +613,39 @@ export default class Level1 extends Phaser.Scene {
 
 
     SpawnGoblins() {
-        this.goblinGroup = this.add.group()
+
+        this.goblinGroup = this.physics.add.group()
+        this.physics.add.collider(this.goblinGroup, this.ground);
         // Initialize goblinCount and isGoblinSpawning if not done elsewhere
         if (this.goblinCount === undefined) {
             this.goblinCount = 0;
         }
 
-        if (this.isGoblinSpawning !== true && this.goblinCount < 1) {
+        if (this.isGoblinSpawning !== true && this.goblinCount < 5) {
             this.isGoblinSpawning = true;
 
             // Set a delay of 3000 milliseconds (3 seconds)
-            this.time.delayedCall(100, () => {
+            this.time.delayedCall(3000, () => {
                 // Spawn a goblin
-                this.goblin = new Goblin(this, 300, 100);
-                this.goblin.update()
-                this.goblinGroup.add(this.goblin)
-                this.physics.add.collider(this.goblin, this.ground);
-                if (this.goblin.health < 50) {
-                    console.log('available to possess')
-                    this.player.PossessEnemy(this.goblin)
-                }
-                // this.goblin.FollowPlayer(this.player)
+                const goblin = new Goblin(this, 300, 80);
+                this.goblinGroup.add(goblin); // Use add instead of create
+                goblin.update();
+
+                // Collider with ground
+
+                // Follow player logic
+                goblin.FollowPlayer(this.player);
+
+                // Collider with player's boulderGroup
+                this.physics.add.collider(this.goblinGroup, this.player.boulderGroup, (goblin, boulder) => {
+                    goblin.dmg(this.player.boulderDmg);
+
+                    if (goblin.health <= 0) {
+                        goblin.destroy();
+                    }
+                });
+
+                this.physics.add.collider(goblin, this.floor)
 
                 // Increment goblinCount
                 this.goblinCount++;

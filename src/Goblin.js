@@ -18,21 +18,28 @@ export default class Goblin extends Phaser.Physics.Arcade.Sprite {
 
         this.CreateAnims()
 
+
+
     }
 
 
     update() {
 
-        console.log(this.possessed)
+
         if (this.health > 0) {
             this.anims.play('goblin_idle', true)
             this.FollowPlayer(this.scene.player)
 
+            if (this && this.health < 50) {
+                this.scene.add.text(this.x, this.y - 10, 'Press [I] to posess')
+            }
+
 
         } else if (this.health > 0 && this.possessed) {
+            console.log("Enemy supposed to be possesed")
             this.EnemyPossessed()
         }
-
+        console.log('is goblin possessed? ', this.possessed)
 
     }
 
@@ -62,21 +69,35 @@ export default class Goblin extends Phaser.Physics.Arcade.Sprite {
 
 
 
-    EnemyPossessed() {
-        if (this.possessed === true && this.health <= 50) {
-            this.cursors = scene.input.keyboard.createCursorKeys()
-            this.right = this.scene.input.keyboard.addKey("D")
-            this.left = this.scene.input.keyboard.addKey("A")
+    // EnemyPossessed() {
+    //     this.possessed = true
+
+    //     this.cursors = scene.input.keyboard.createCursorKeys()
+    //     this.right = this.scene.input.keyboard.addKey("D")
+    //     this.left = this.scene.input.keyboard.addKey("A")
 
 
-            if (this.right.isDown) {
-                this.setVelocityX(100)
-            } else if (this.left.isDown) {
-                this.setVelocityX(-100)
-            } else {
-                this.setVelocityX(0)
-            }
-        }
+    //     if (this.right.isDown) {
+    //         this.setVelocityX(100)
+    //     } else if (this.left.isDown) {
+    //         this.setVelocityX(-100)
+    //     } else {
+    //         this.setVelocityX(0)
+    //     }
+
+    // }
+
+
+    dmg(damage) {
+        if (this.health > 0 && this)
+            damage = damage - this.defStat
+        console.log(damage)
+        this.health -= damage
+        this.dmgCounter = this.scene.add.text(this.x - 10, this.y, damage)
+        console.log(this.health)
+        this.scene.time.delayedCall(100, () => {
+            this.dmgCounter.destroy()
+        })
     }
 
 }

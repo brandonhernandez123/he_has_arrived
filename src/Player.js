@@ -15,6 +15,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setOffset(135, 80)
         this.inDialogue = false;
         this.possessing = false
+        this.attemptingToPossess = false
+        this.boulderDmg = 60
+        this.fireBallDmg = 70
+        this.specialDmg = 100
 
         this.currentState
         this.gameState = {
@@ -63,6 +67,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.PlayerMovement()
             this.PlayerAttacks()
         }
+
+
+
 
 
 
@@ -404,19 +411,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
-    PossessEnemy(enemy) {
-        if (!this.possessing && enemy.health <= 50 && enemy.health > 0) {
-            console.log('you can possess enemy')
-            if (Phaser.Input.Keyboard.JustDown(this.gameState.possess)) {
-                this.possessing = true
-                enemy.possessed = true
-                console.log(this.possessing, 'working?')
-                this.scene.time.delayedCall(15000, () => {
-                    this.possessing = false
-                }, this)
-            }
-        }
-    }
+    // PossessEnemy(enemy) {
+    //     if (!this.possessing && enemy.health <= 50 && enemy.health > 0) {
+    //         this.possessing = true
+    //         enemy.possessed = true
+    //         this.scene.time.delayedCall(15000, () => {
+    //             this.possessing = false
+    //         }, this)
+
+    //     }
+    // }
 
 
 
