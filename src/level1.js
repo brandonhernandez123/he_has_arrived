@@ -38,6 +38,8 @@ import eclipseAtk from './assets/Eclipsor/eclipsorAtk.png'
 import eclipseWalk from './assets/Eclipsor/eclipseWalk.png'
 
 import goblin_idle from './assets/Goblin/Idle.png'
+import goblin_hit from './assets/Goblin/hit.png'
+import goblin_Death from './assets/Goblin/Death.png'
 
 
 
@@ -106,6 +108,10 @@ export default class Level1 extends Phaser.Scene {
 
 
         this.load.spritesheet('goblin_idle', goblin_idle, { frameWidth: 150, frameHeight: 150 })
+        this.load.spritesheet('goblin_hit', goblin_hit, { frameWidth: 150, frameHeight: 150 })
+        this.load.spritesheet('goblin_Death', goblin_Death, { frameWidth: 150, frameHeight: 150 })
+
+
 
 
 
@@ -541,13 +547,11 @@ export default class Level1 extends Phaser.Scene {
 
     HeHasArrived() {
         if (this.nextLine > 22 && this.heHasArrived === false) {
-            console.log("enter eclipso")
             this.flashRectangle = this.add.rectangle(0, 0, 1920, 1080, 0xffffff);
 
             this.heHasArrived = true
             if (this.heHasArrived === true) {
                 this.time.delayedCall(1000, () => {
-                    console.log('he has arrived')
                     this.flashRectangle.destroy()
                     this.eclipsor = new Eclipsor(this, 250, 100)
                     this.eclipsor.anims.play('eclipsor_idle', true)
